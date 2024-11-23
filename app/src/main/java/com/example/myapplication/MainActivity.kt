@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
-    //test
+
     override fun onPause() {
         super.onPause()
         mediaPlayer.pause() // Pause music when activity goes to background
