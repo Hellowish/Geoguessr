@@ -16,6 +16,10 @@
             android:name=".MainPlay"
             android:exported="false" />
         <activity
+            android:name=".Home"
+            android:exported="false"
+            tools:ignore="MissingClass" />
+        <activity
             android:name=".MainActivity2"
             android:exported="false" />
         <activity

@@ -22,23 +22,11 @@
         android:layout_width="398dp"
         android:layout_height="381dp"
         android:layout_marginTop="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.461"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.104"
         app:srcCompat="@drawable/taiwan_map" />
-
-    <ImageButton
-        android:id="@+id/imageButton5"
-        android:layout_width="312dp"
-        android:layout_height="216dp"
-        android:background="@android:color/transparent"
-        android:scaleType="fitCenter"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/play_button"
-        tools:layout_editor_absoluteY="480dp"
-        tools:ignore="MissingConstraints" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
