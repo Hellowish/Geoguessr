@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.net.wifi.hotspot2.pps.HomeSp;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -31,7 +32,7 @@ public class MainActivity2 extends AppCompatActivity {
                 // 簡單驗證（實際開發中應結合伺服器驗證）
                 if ("user".equals(username) && "password".equals(password)) {
                     // 登入成功，跳到主頁
-                    Intent intent = new Intent(MainActivity2.this, MainActivity2.class);
+                    Intent intent = new Intent(MainActivity2.this, Home.class);
                     startActivity(intent);
                     finish(); // 關閉當前Activity
                 } else {
