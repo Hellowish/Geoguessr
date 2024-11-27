@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         // Set up button click listener to open MainActivity2
         findViewById<ImageButton>(R.id.button).setOnClickListener {
-            val intent = Intent(this, MainActivity2::class.java)
+            val intent = Intent(this, MainPlay::class.java)
             startActivity(intent)
         }
     }
