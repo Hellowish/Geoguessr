@@ -11,20 +11,24 @@ public class Home extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.game_home);  // 加載布局文件
+        setContentView(R.layout.game_home); // 加載布局文件
 
-        // 初始化 ImageButton
+        // 初始化 ImageButton5（Play 按鈕）
         ImageButton playButton = findViewById(R.id.imageButton5);
+        playButton.setOnClickListener(v -> {
+            // 啟動 MainPlay Activity
+            Intent intent = new Intent(Home.this, MainPlay.class);
+            startActivity(intent);
+        });
 
-        // 設置 ImageButton 的點擊事件處理
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 點擊後啟動 MainPlay Activity
-                Intent intent = new Intent(Home.this, MainPlay.class);
-                startActivity(intent);  // 啟動 MainPlay Activity
-            }
+        // 初始化 ImageButton2（Ranking 按鈕）
+        ImageButton rankingButton = findViewById(R.id.imageButton2);
+        rankingButton.setOnClickListener(v -> {
+            // 啟動 Ranking Activity
+            Intent intent = new Intent(Home.this, Ranking.class);
+            startActivity(intent);
         });
     }
 }
+
 
