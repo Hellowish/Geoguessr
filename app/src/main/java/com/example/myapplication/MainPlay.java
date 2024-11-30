@@ -20,16 +20,21 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
 import com.google.android.gms.maps.model.StreetViewPanoramaOrientation;
+import android.content.Intent;
+import android.os.CountDownTimer;
+import android.widget.TextView;
 
 public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, OnStreetViewPanoramaReadyCallback {
 
     private LatLng mapCoordinate;
-
     private GoogleMap mapIns;
     private StreetViewPanorama streetViewIns;
-
     private SupportMapFragment mapFragment;
     private SupportStreetViewPanoramaFragment streetViewFragment;
+
+    private TextView timerText;
+    private CountDownTimer countDownTimer;
+    private long timeLeftInMillis = 30000; // 30 seconds in milliseconds
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,23 +47,52 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
             return insets;
         });
 
-        // 台灣正中心的經緯度
         mapCoordinate = new LatLng(23.975667, 120.973861);
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
-        if(mapFragment != null)
-            mapFragment.getMapAsync((OnMapReadyCallback) this);
+        if (mapFragment != null)
+            mapFragment.getMapAsync(this);
 
         streetViewFragment = (SupportStreetViewPanoramaFragment) getSupportFragmentManager().findFragmentById(R.id.streetview_fragment);
-        if(streetViewFragment != null)
+        if (streetViewFragment != null)
             streetViewFragment.getStreetViewPanoramaAsync(this);
+
+        // Initialize timer TextView
+        timerText = findViewById(R.id.timer_text);
+
+        // Start the countdown timer
+        startTimer();
+    }
+
+    private void startTimer() {
+        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timeLeftInMillis = millisUntilFinished;
+                updateTimerText();
+            }
+
+            @Override
+            public void onFinish() {
+                switchToFailurePage();
+            }
+        }.start();
+    }
+
+    private void updateTimerText() {
+        int seconds = (int) (timeLeftInMillis / 1000);
+        timerText.setText(String.valueOf(seconds));
+    }
+
+    private void switchToFailurePage() {
+        Intent intent = new Intent(MainPlay.this, FailureActivity.class);
+        startActivity(intent);
+        finish(); // Optional: Close the current activity
     }
 
     @Override
     public void onMapReady(@NonNull GoogleMap map) {
         mapIns = map;
-
-        // 在地圖上新增Marker
         mapIns.addMarker(new MarkerOptions().position(mapCoordinate).title("Location"));
         mapIns.moveCamera(CameraUpdateFactory.newLatLngZoom(mapCoordinate, 8f));
     }
@@ -71,12 +105,13 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         streetViewPanorama.setUserNavigationEnabled(true);
         streetViewPanorama.setZoomGesturesEnabled(true);
         streetViewPanorama.animateTo(
-                new StreetViewPanoramaCamera.Builder().orientation(new StreetViewPanoramaOrientation(20, 20))
+                new StreetViewPanoramaCamera.Builder()
+                        .orientation(new StreetViewPanoramaOrientation(20, 20))
                         .zoom(streetViewPanorama.getPanoramaCamera().zoom)
                         .build(), 2000
         );
 
-        LatLng FUJEN = new LatLng(25.0326369,121.4342057);
+        LatLng FUJEN = new LatLng(25.0326369, 121.4342057);
         setStreetViewPosition(FUJEN);
     }
 
