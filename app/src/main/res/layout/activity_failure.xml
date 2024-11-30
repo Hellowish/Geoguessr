@@ -10,8 +10,8 @@
 
     <ImageButton
         android:id="@+id/retry"
-        android:layout_width="147dp"
-        android:layout_height="129dp"
+        android:layout_width="154dp"
+        android:layout_height="148dp"
         android:layout_marginTop="80dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
