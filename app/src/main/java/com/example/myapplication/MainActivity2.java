@@ -30,7 +30,7 @@ public class MainActivity2 extends AppCompatActivity {
                 String password = passwordEditText.getText().toString();
 
                 // 簡單驗證（實際開發中應結合伺服器驗證）
-                if ("user".equals(username) && "password".equals(password)) {
+                if ("".equals(username) && "".equals(password)) {
                     // 登入成功，跳到主頁
                     Intent intent = new Intent(MainActivity2.this, Home.class);
                     startActivity(intent);
