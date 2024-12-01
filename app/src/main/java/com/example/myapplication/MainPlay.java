@@ -2,6 +2,16 @@ package com.example.myapplication;
 
 import android.os.Bundle;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,11 +32,14 @@ import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
 import com.google.android.gms.maps.model.StreetViewPanoramaOrientation;
 import android.content.Intent;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, OnStreetViewPanoramaReadyCallback {
 
     private LatLng mapCoordinate;
+    private LatLng strretViewCoordinate;
     private GoogleMap mapIns;
     private StreetViewPanorama streetViewIns;
     private SupportMapFragment mapFragment;
@@ -56,6 +69,8 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         streetViewFragment = (SupportStreetViewPanoramaFragment) getSupportFragmentManager().findFragmentById(R.id.streetview_fragment);
         if (streetViewFragment != null)
             streetViewFragment.getStreetViewPanoramaAsync(this);
+
+        // RequestQuetion(69);
 
         // Initialize timer TextView
         timerText = findViewById(R.id.timer_text);
@@ -110,12 +125,45 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
                         .zoom(streetViewPanorama.getPanoramaCamera().zoom)
                         .build(), 2000
         );
-
-        LatLng FUJEN = new LatLng(25.0326369, 121.4342057);
-        setStreetViewPosition(FUJEN);
     }
 
     public void setStreetViewPosition(LatLng latLng) {
         streetViewIns.setPosition(latLng);
+    }
+
+    public void RequestQuetion(int id) {
+        ApiHelper.fetchCoordinates(this, id,
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        // 從回應中提取 latitude 和 longitude
+                        double latitude = response.getDouble("latitude");
+                        double longitude = response.getDouble("longitude");
+
+                        latitude = Math.round(latitude * 1000.0) / 1000.0;
+                        longitude = Math.round(longitude * 1000.0) / 1000.0;
+
+                        // 建立 LatLng 對象
+                        strretViewCoordinate = new LatLng(latitude, longitude);
+                        setStreetViewPosition(strretViewCoordinate);
+                    } catch (Exception e) {
+                        Toast.makeText(MainPlay.this,
+                                "Parsing error: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                        Log.d("DEBUG", "Parsing error: " + e.getMessage());
+                    }
+                }
+            },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainPlay.this,
+                                "Error: " + error.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                        Log.d("DEBUG", "Error: " + error.getMessage());
+                    }
+                }
+        );
     }
 }
