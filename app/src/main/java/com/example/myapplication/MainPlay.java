@@ -1,24 +1,22 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import android.os.CountDownTimer;
+import android.util.Log;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,11 +28,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
 import com.google.android.gms.maps.model.StreetViewPanoramaOrientation;
-import android.content.Intent;
-import android.os.CountDownTimer;
-import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import org.json.JSONObject;
 
 public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, OnStreetViewPanoramaReadyCallback {
 
@@ -47,13 +42,14 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
     private TextView timerText;
     private CountDownTimer countDownTimer;
-    private long timeLeftInMillis = 30000; // 30 seconds in milliseconds
+    private long timeLeftInMillis = 300000; // 30 seconds in milliseconds
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_play);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -75,6 +71,9 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
         // Start the countdown timer
         startTimer();
+
+        // Set up the hint button
+        findViewById(R.id.hint).setOnClickListener(view -> showHintPopup());
     }
 
     private void startTimer() {
@@ -133,29 +132,28 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
     public void RequestQuetion(int id) {
         ApiHelper.fetchCoordinates(this, id,
-            new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        // 從回應中提取 latitude 和 longitude
-                        double latitude = response.getDouble("latitude");
-                        double longitude = response.getDouble("longitude");
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // Parse latitude and longitude from the response
+                            double latitude = response.getDouble("latitude");
+                            double longitude = response.getDouble("longitude");
 
-                        latitude = Math.round(latitude * 1000.0) / 1000.0;
-                        longitude = Math.round(longitude * 1000.0) / 1000.0;
+                            latitude = Math.round(latitude * 1000.0) / 1000.0;
+                            longitude = Math.round(longitude * 1000.0) / 1000.0;
 
-                        // 建立 LatLng 對象
-                        strretViewCoordinate = new LatLng(latitude, longitude);
-                        strretViewCoordinate = new LatLng(25.0362, 121.4322);
-                        setStreetViewPosition(strretViewCoordinate);
-                    } catch (Exception e) {
-                        Toast.makeText(MainPlay.this,
-                                "Parsing error: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                        Log.d("DEBUG", "Parsing error: " + e.getMessage());
+                            // Create LatLng object
+                            strretViewCoordinate = new LatLng(latitude, longitude);
+                            setStreetViewPosition(strretViewCoordinate);
+                        } catch (Exception e) {
+                            Toast.makeText(MainPlay.this,
+                                    "Parsing error: " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                            Log.d("DEBUG", "Parsing error: " + e.getMessage());
+                        }
                     }
-                }
-            },
+                },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
@@ -166,5 +164,22 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
                     }
                 }
         );
+    }
+
+    private void showHintPopup() {
+        new AlertDialog.Builder(this)
+                .setTitle("Are you sure?")
+                .setMessage("Warning, will deduct points.")
+                .setPositiveButton("Yes", (dialog, which) -> showHintDetailsPopup())
+                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    private void showHintDetailsPopup() {
+        new AlertDialog.Builder(this)
+                .setTitle("Hint")
+                .setMessage("Here is your hint: Look closer at the location!")
+                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                .show();
     }
 }
