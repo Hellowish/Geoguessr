@@ -70,8 +70,6 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         if (streetViewFragment != null)
             streetViewFragment.getStreetViewPanoramaAsync(this);
 
-        // RequestQuetion(69);
-
         // Initialize timer TextView
         timerText = findViewById(R.id.timer_text);
 
@@ -125,6 +123,8 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
                         .zoom(streetViewPanorama.getPanoramaCamera().zoom)
                         .build(), 2000
         );
+
+        RequestQuetion(1);
     }
 
     public void setStreetViewPosition(LatLng latLng) {
@@ -146,6 +146,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
                         // 建立 LatLng 對象
                         strretViewCoordinate = new LatLng(latitude, longitude);
+                        strretViewCoordinate = new LatLng(25.0362, 121.4322);
                         setStreetViewPosition(strretViewCoordinate);
                     } catch (Exception e) {
                         Toast.makeText(MainPlay.this,
