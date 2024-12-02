@@ -34,16 +34,16 @@ def get_town_english_name(chinese_town):
     english_name = town_mapping.get(base_name, base_name)
     
     # 根據原始名稱的尾部添加對應的英文後綴
-    if '區' in chinese_town:
-        return f"{english_name}_District"
-    elif '鄉' in chinese_town:
-        return f"{english_name}_Township"
-    elif '鎮' in chinese_town:
-        return f"{english_name}_Town"
-    elif '市' in chinese_town and len(chinese_town) <= 3:  # 確保是行政區的"市"，而不是縣市的"市"
-        return f"{english_name}_City"
-    else:
-        return english_name
+    # if '區' in chinese_town:
+    #     return f"{english_name}_District"
+    # elif '鄉' in chinese_town:
+    #     return f"{english_name}_Township"
+    # elif '鎮' in chinese_town:
+    #     return f"{english_name}_Town"
+    # elif '市' in chinese_town and len(chinese_town) <= 3:  # 確保是行政區的"市"，而不是縣市的"市"
+    #     return f"{english_name}_City"
+    # else:
+    #     return english_name
 
 def split_data_into_csvs(input_file):
     try:
@@ -56,23 +56,13 @@ def split_data_into_csvs(input_file):
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
         
-        # 建立城市和行政區對照表，並加入英文名稱
-        city_town_mapping = df[['city', 'town']].drop_duplicates()
-        city_town_mapping['city_english'] = city_town_mapping['city'].apply(get_english_name)
-        city_town_mapping['town_english'] = city_town_mapping['town'].apply(get_town_english_name)
-        
-        # 儲存對照表
-        city_town_mapping.to_csv(f'{output_dir}/all_city_town_mapping.csv', 
-                               index=False, 
-                               encoding='utf-8-sig')
-        
         # 取得所有不重複的城市名稱
         cities = df['city'].unique()
         
         # 為每個城市建立獨立的CSV檔案
         for city in cities:
             # 篩選該城市的資料
-            city_data = df[df['city'] == city][['latitude', 'longitude']]
+            city_data = df[df['city'] == city][['town', 'latitude', 'longitude']]
             
             # 取得英文檔名
             filename = get_english_name(city)
@@ -88,7 +78,6 @@ def split_data_into_csvs(input_file):
         print('\n資料處理完成！')
         print(f'檔案已儲存在 {output_dir} 目錄下')
         print(f'共處理 {len(cities)} 個城市')
-        print('all_city_town_mapping.csv 包含所有城市和行政區對照')
         
     except Exception as e:
         print(f'處理資料時發生錯誤：{str(e)}')
