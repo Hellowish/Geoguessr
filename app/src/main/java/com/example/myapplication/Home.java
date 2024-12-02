@@ -36,6 +36,14 @@ public class Home extends AppCompatActivity {
             Intent intent = new Intent(Home.this, Ranking.class);
             startActivity(intent);
         });
+
+        // Initialize ImageButton2 (Ranking button)
+        ImageButton UserPage = findViewById(R.id.imageButton);
+        UserPage.setOnClickListener(v -> {
+            // Start Ranking Activity
+            Intent intent = new Intent(Home.this, User.class);
+            startActivity(intent);
+        });
     }
 
     @Override

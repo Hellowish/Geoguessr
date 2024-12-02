@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 
@@ -12,11 +13,18 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class FailureActivity extends AppCompatActivity {
 
+    private MediaPlayer mediaPlayer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_failure);
+
+        // Play background music
+        mediaPlayer = MediaPlayer.create(this, R.raw.failure_music); // Replace "failure_music" with your audio file name in res/raw
+        mediaPlayer.setLooping(true); // Loop the music
+        mediaPlayer.start();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -37,5 +45,16 @@ public class FailureActivity extends AppCompatActivity {
         Intent intent = new Intent(this, Home.class); // Replace `HomeActivity` with your home page activity class
         startActivity(intent);
         finish(); // Close the current activity
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Release MediaPlayer resources
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 }
