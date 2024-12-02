@@ -10,7 +10,7 @@
         android:id="@+id/imageView"
         android:layout_width="233dp"
         android:layout_height="83dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.033"
         app:layout_constraintStart_toStartOf="parent"
@@ -72,5 +72,29 @@
         app:layout_constraintTop_toBottomOf="@+id/imageButton5"
         app:layout_constraintVertical_bias="0.333"
         app:srcCompat="@drawable/ranking_button" />
+
+
+    <Spinner
+        android:id="@+id/spinner_city"
+        android:layout_width="179dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="24dp"
+        android:background="#602ABF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.149" />
+
+    <Spinner
+        android:id="@+id/spinner_town"
+        android:layout_width="179dp"
+        android:layout_height="37dp"
+        android:background="#602abf"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/spinner_city"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.149" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
