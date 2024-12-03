@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +45,9 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
     private CountDownTimer countDownTimer;
     private long timeLeftInMillis = 300000; // 30 seconds in milliseconds
 
+    private ImageButton expandButton;
+    private boolean isMapFragmentVisible = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,11 +73,34 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         // Initialize timer TextView
         timerText = findViewById(R.id.timer_text);
 
+        // Initialize expand button
+        expandButton = findViewById(R.id.expand);
+        expandButton.setOnClickListener(v -> toggleFragmentVisibility());
+
         // Start the countdown timer
         startTimer();
 
         // Set up the hint button
         findViewById(R.id.hint).setOnClickListener(view -> showHintPopup());
+    }
+
+    private void toggleFragmentVisibility() {
+        if (mapFragment != null) {
+            if (isMapFragmentVisible) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .hide(mapFragment)
+                        .commit();
+                expandButton.setImageResource(R.drawable._7); // Update icon
+            } else {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .show(mapFragment)
+                        .commit();
+                expandButton.setImageResource(R.drawable._7); // Update icon
+            }
+            isMapFragmentVisible = !isMapFragmentVisible;
+        }
     }
 
     private void startTimer() {
