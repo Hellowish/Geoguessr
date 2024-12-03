@@ -46,7 +46,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
     private long timeLeftInMillis = 300000; // 30 seconds in milliseconds
 
     private ImageButton expandButton;
-    private boolean isMapFragmentVisible = true;
+    private boolean isMapFragmentVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +82,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
         // Set up the hint button
         findViewById(R.id.hint).setOnClickListener(view -> showHintPopup());
+        getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();
     }
 
     private void toggleFragmentVisibility() {
