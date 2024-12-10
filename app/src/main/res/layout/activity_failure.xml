@@ -17,7 +17,7 @@
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView8"
-        app:srcCompat="@drawable/colorful_retry_icon_abstract_black_260nw_2397931051" />
+        app:srcCompat="@drawable/frame2" />
 
     <ImageView
         android:id="@+id/imageView8"
