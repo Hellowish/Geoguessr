@@ -1,6 +1,8 @@
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android" android:oneshot="false">
-    <item android:drawable="@drawable/frame1" android:duration="500" />
-    <item android:drawable="@drawable/frame2" android:duration="500" />
-    <item android:drawable="@drawable/frame3" android:duration="500" />
+    <item android:drawable="@drawable/blackspark" android:duration="3000" />
+    <item android:drawable="@drawable/ocean" android:duration="3000" />
+    <item android:drawable="@drawable/cool" android:duration="3000" />
+    <item android:drawable="@drawable/starsblue" android:duration="3000" />
+    <item android:drawable="@drawable/t101" android:duration="3000" />
     <!-- Add more frames as needed -->
 </animation-list>
