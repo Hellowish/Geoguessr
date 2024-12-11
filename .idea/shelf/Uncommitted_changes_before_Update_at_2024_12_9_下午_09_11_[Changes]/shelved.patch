@@ -1,0 +1,107 @@
+Index: app/src/main/java/com/example/myapplication/ApiHelper.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication;\r\n\r\nimport android.content.Context;\r\nimport com.android.volley.Request;\r\nimport com.android.volley.Response;\r\nimport com.android.volley.toolbox.JsonObjectRequest;\r\nimport org.json.JSONObject;\r\n\r\npublic class ApiHelper {\r\n\r\n    private static final String BASE_URL = \"http://140.136.151.146/geo/coordinate.php\";\r\n\r\n    public static void fetchCoordinates(Context context, int id,\r\n                                        Response.Listener<JSONObject> listener,\r\n                                        Response.ErrorListener errorListener) {\r\n        // 組合請求 URL\r\n        String url = BASE_URL + \"?id=\" + id;\r\n\r\n        // 建立 JSON 請求\r\n        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(\r\n                Request.Method.GET, url, null,\r\n                listener, // 成功回應的處理器\r\n                errorListener // 錯誤回應的處理器\r\n        );\r\n\r\n        // 將請求加入佇列\r\n        RequestQueueSingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/ApiHelper.java b/app/src/main/java/com/example/myapplication/ApiHelper.java
+--- a/app/src/main/java/com/example/myapplication/ApiHelper.java	(revision 55818e83add8c28218f6edf340ecc265c55521d6)
++++ b/app/src/main/java/com/example/myapplication/ApiHelper.java	(date 1733140517744)
+@@ -10,11 +10,11 @@
+ 
+     private static final String BASE_URL = "http://140.136.151.146/geo/coordinate.php";
+ 
+-    public static void fetchCoordinates(Context context, int id,
++    public static void fetchCoordinates(Context context, String town, String city,
+                                         Response.Listener<JSONObject> listener,
+                                         Response.ErrorListener errorListener) {
+         // 組合請求 URL
+-        String url = BASE_URL + "?id=" + id;
++        String url = BASE_URL + "?city=" + city + "&town=" + town;
+ 
+         // 建立 JSON 請求
+         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+Index: app/src/main/java/com/example/myapplication/MainPlay.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication;\r\n\r\nimport android.os.Bundle;\r\n\r\nimport com.android.volley.Request;\r\nimport com.android.volley.RequestQueue;\r\nimport com.android.volley.Response;\r\nimport com.android.volley.VolleyError;\r\nimport com.android.volley.toolbox.JsonArrayRequest;\r\nimport com.android.volley.toolbox.JsonObjectRequest;\r\nimport com.android.volley.toolbox.Volley;\r\nimport org.json.JSONArray;\r\nimport org.json.JSONObject;\r\n\r\nimport androidx.activity.EdgeToEdge;\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.core.graphics.Insets;\r\nimport androidx.core.view.ViewCompat;\r\nimport androidx.core.view.WindowInsetsCompat;\r\n\r\nimport com.google.android.gms.maps.CameraUpdateFactory;\r\nimport com.google.android.gms.maps.GoogleMap;\r\nimport com.google.android.gms.maps.OnMapReadyCallback;\r\nimport com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;\r\nimport com.google.android.gms.maps.StreetViewPanorama;\r\nimport com.google.android.gms.maps.SupportMapFragment;\r\nimport com.google.android.gms.maps.SupportStreetViewPanoramaFragment;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.android.gms.maps.model.MarkerOptions;\r\nimport com.google.android.gms.maps.model.StreetViewPanoramaCamera;\r\nimport com.google.android.gms.maps.model.StreetViewPanoramaOrientation;\r\nimport android.content.Intent;\r\nimport android.os.CountDownTimer;\r\nimport android.util.Log;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\npublic class MainPlay extends AppCompatActivity implements OnMapReadyCallback, OnStreetViewPanoramaReadyCallback {\r\n\r\n    private LatLng mapCoordinate;\r\n    private LatLng strretViewCoordinate;\r\n    private GoogleMap mapIns;\r\n    private StreetViewPanorama streetViewIns;\r\n    private SupportMapFragment mapFragment;\r\n    private SupportStreetViewPanoramaFragment streetViewFragment;\r\n\r\n    private TextView timerText;\r\n    private CountDownTimer countDownTimer;\r\n    private long timeLeftInMillis = 30000; // 30 seconds in milliseconds\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        EdgeToEdge.enable(this);\r\n        setContentView(R.layout.activity_main_play);\r\n        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {\r\n            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());\r\n            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);\r\n            return insets;\r\n        });\r\n\r\n        mapCoordinate = new LatLng(23.975667, 120.973861);\r\n\r\n        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);\r\n        if (mapFragment != null)\r\n            mapFragment.getMapAsync(this);\r\n\r\n        streetViewFragment = (SupportStreetViewPanoramaFragment) getSupportFragmentManager().findFragmentById(R.id.streetview_fragment);\r\n        if (streetViewFragment != null)\r\n            streetViewFragment.getStreetViewPanoramaAsync(this);\r\n\r\n        // Initialize timer TextView\r\n        timerText = findViewById(R.id.timer_text);\r\n\r\n        // Start the countdown timer\r\n        startTimer();\r\n    }\r\n\r\n    private void startTimer() {\r\n        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {\r\n            @Override\r\n            public void onTick(long millisUntilFinished) {\r\n                timeLeftInMillis = millisUntilFinished;\r\n                updateTimerText();\r\n            }\r\n\r\n            @Override\r\n            public void onFinish() {\r\n                switchToFailurePage();\r\n            }\r\n        }.start();\r\n    }\r\n\r\n    private void updateTimerText() {\r\n        int seconds = (int) (timeLeftInMillis / 1000);\r\n        timerText.setText(String.valueOf(seconds));\r\n    }\r\n\r\n    private void switchToFailurePage() {\r\n        Intent intent = new Intent(MainPlay.this, FailureActivity.class);\r\n        startActivity(intent);\r\n        finish(); // Optional: Close the current activity\r\n    }\r\n\r\n    @Override\r\n    public void onMapReady(@NonNull GoogleMap map) {\r\n        mapIns = map;\r\n        mapIns.addMarker(new MarkerOptions().position(mapCoordinate).title(\"Location\"));\r\n        mapIns.moveCamera(CameraUpdateFactory.newLatLngZoom(mapCoordinate, 8f));\r\n    }\r\n\r\n    @Override\r\n    public void onStreetViewPanoramaReady(StreetViewPanorama streetViewPanorama) {\r\n        streetViewIns = streetViewPanorama;\r\n\r\n        streetViewPanorama.setPanningGesturesEnabled(true);\r\n        streetViewPanorama.setUserNavigationEnabled(true);\r\n        streetViewPanorama.setZoomGesturesEnabled(true);\r\n        streetViewPanorama.animateTo(\r\n                new StreetViewPanoramaCamera.Builder()\r\n                        .orientation(new StreetViewPanoramaOrientation(20, 20))\r\n                        .zoom(streetViewPanorama.getPanoramaCamera().zoom)\r\n                        .build(), 2000\r\n        );\r\n\r\n        RequestQuetion(1);\r\n    }\r\n\r\n    public void setStreetViewPosition(LatLng latLng) {\r\n        streetViewIns.setPosition(latLng);\r\n    }\r\n\r\n    public void RequestQuetion(int id) {\r\n        ApiHelper.fetchCoordinates(this, id,\r\n            new Response.Listener<JSONObject>() {\r\n                @Override\r\n                public void onResponse(JSONObject response) {\r\n                    try {\r\n                        // 從回應中提取 latitude 和 longitude\r\n                        double latitude = response.getDouble(\"latitude\");\r\n                        double longitude = response.getDouble(\"longitude\");\r\n\r\n                        latitude = Math.round(latitude * 1000.0) / 1000.0;\r\n                        longitude = Math.round(longitude * 1000.0) / 1000.0;\r\n\r\n                        // 建立 LatLng 對象\r\n                        strretViewCoordinate = new LatLng(latitude, longitude);\r\n                        strretViewCoordinate = new LatLng(25.0362, 121.4322);\r\n                        setStreetViewPosition(strretViewCoordinate);\r\n                    } catch (Exception e) {\r\n                        Toast.makeText(MainPlay.this,\r\n                                \"Parsing error: \" + e.getMessage(),\r\n                                Toast.LENGTH_LONG).show();\r\n                        Log.d(\"DEBUG\", \"Parsing error: \" + e.getMessage());\r\n                    }\r\n                }\r\n            },\r\n                new Response.ErrorListener() {\r\n                    @Override\r\n                    public void onErrorResponse(VolleyError error) {\r\n                        Toast.makeText(MainPlay.this,\r\n                                \"Error: \" + error.getMessage(),\r\n                                Toast.LENGTH_LONG).show();\r\n                        Log.d(\"DEBUG\", \"Error: \" + error.getMessage());\r\n                    }\r\n                }\r\n        );\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/MainPlay.java b/app/src/main/java/com/example/myapplication/MainPlay.java
+--- a/app/src/main/java/com/example/myapplication/MainPlay.java	(revision 55818e83add8c28218f6edf340ecc265c55521d6)
++++ b/app/src/main/java/com/example/myapplication/MainPlay.java	(date 1733141147663)
+@@ -124,15 +124,15 @@
+                         .build(), 2000
+         );
+ 
+-        RequestQuetion(1);
++        RequestQuetion("taipei", "中正區");
+     }
+ 
+     public void setStreetViewPosition(LatLng latLng) {
+         streetViewIns.setPosition(latLng);
+     }
+ 
+-    public void RequestQuetion(int id) {
+-        ApiHelper.fetchCoordinates(this, id,
++    public void RequestQuetion(String city, String town) {
++        ApiHelper.fetchCoordinates(this, city, town,
+             new Response.Listener<JSONObject>() {
+                 @Override
+                 public void onResponse(JSONObject response) {
+Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_2024_11_30__09_01__Changes_.xml
+===================================================================
+diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_2024_11_30__09_01__Changes_.xml b/.idea/shelf/Uncommitted_changes_before_Checkout_at_2024_11_30__09_01__Changes_.xml
+deleted file mode 100644
+--- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_2024_11_30__09_01__Changes_.xml	(revision 55818e83add8c28218f6edf340ecc265c55521d6)
++++ /dev/null	(revision 55818e83add8c28218f6edf340ecc265c55521d6)
+@@ -1,4 +0,0 @@
+-<changelist name="Uncommitted_changes_before_Checkout_at_2024_11_30_上午_09_01_[Changes]" date="1732928491570" recycled="true" deleted="true">
+-  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_2024_11_30_上午_09_01_[Changes]/shelved.patch" />
+-  <option name="DESCRIPTION" value="Uncommitted changes before Checkout at 2024/11/30 上午 09:01 [Changes]" />
+-</changelist>
+\ No newline at end of file
+Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_2024_11_30_上午_08_49_[Changes]/shelved.patch
+===================================================================
+diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_2024_11_30_上午_08_49_[Changes]/shelved.patch b/.idea/shelf/Uncommitted_changes_before_Checkout_at_2024_11_30_上午_08_49_[Changes]/shelved.patch
+deleted file mode 100644
+--- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_2024_11_30_上午_08_49_[Changes]/shelved.patch	(revision 55818e83add8c28218f6edf340ecc265c55521d6)
++++ /dev/null	(revision 55818e83add8c28218f6edf340ecc265c55521d6)
+@@ -1,18 +0,0 @@
+-Index: .idea/deploymentTargetSelector.xml
+-===================================================================
+-diff --git a/.idea/deploymentTargetSelector.xml b/.idea/deploymentTargetSelector.xml
+-deleted file mode 100644
+---- a/.idea/deploymentTargetSelector.xml	(revision f5b6491239c8c6a1d627c21077c9a00506630c30)
+-+++ /dev/null	(revision f5b6491239c8c6a1d627c21077c9a00506630c30)
+-@@ -1,10 +0,0 @@
+--<?xml version="1.0" encoding="UTF-8"?>
+--<project version="4">
+--  <component name="deploymentTargetSelector">
+--    <selectionStates>
+--      <SelectionState runConfigName="app">
+--        <option name="selectionMode" value="DROPDOWN" />
+--      </SelectionState>
+--    </selectionStates>
+--  </component>
+--</project>
+-\ No newline at end of file
+Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_2024_11_30__08_49__Changes_.xml
+===================================================================
+diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_2024_11_30__08_49__Changes_.xml b/.idea/shelf/Uncommitted_changes_before_Checkout_at_2024_11_30__08_49__Changes_.xml
+deleted file mode 100644
+--- a/.idea/shelf/Uncommitted_changes_before_Checkout_at_2024_11_30__08_49__Changes_.xml	(revision 55818e83add8c28218f6edf340ecc265c55521d6)
++++ /dev/null	(revision 55818e83add8c28218f6edf340ecc265c55521d6)
+@@ -1,7 +0,0 @@
+-<changelist name="Uncommitted_changes_before_Checkout_at_2024_11_30_上午_08_49_[Changes]" date="1732927783428" recycled="true" deleted="true">
+-  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_2024_11_30_上午_08_49_[Changes]/shelved.patch" />
+-  <option name="DESCRIPTION" value="Uncommitted changes before Checkout at 2024/11/30 上午 08:49 [Changes]" />
+-  <binary>
+-    <option name="BEFORE_PATH" value=".idea/.name" />
+-  </binary>
+-</changelist>
+\ No newline at end of file
+diff --git a/.idea/shelf/Uncommitted_changes_before_Checkout_at_2024_11_30_上午_09_01_[Changes]/shelved.patch b/.idea/shelf/Uncommitted_changes_before_Checkout_at_2024_11_30_上午_09_01_[Changes]/shelved.patch
+deleted file mode 100644
