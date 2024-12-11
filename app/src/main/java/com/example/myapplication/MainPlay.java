@@ -29,8 +29,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
 import com.google.android.gms.maps.model.StreetViewPanoramaOrientation;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Callback;
+import okhttp3.Call;
 
 public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, OnStreetViewPanoramaReadyCallback {
 
@@ -151,15 +158,15 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
                         .build(), 2000
         );
 
-        RequestQuetion(1);
+        RequestQuetion("taipei", "中正區");
     }
 
     public void setStreetViewPosition(LatLng latLng) {
         streetViewIns.setPosition(latLng);
     }
 
-    public void RequestQuetion(int id) {
-        ApiHelper.fetchCoordinates(this, id,
+    public void RequestQuetion(String city, String town) {
+        ApiHelper.fetchCoordinates(this, city, town,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -194,7 +201,40 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         );
     }
 
+    String quetionResult = null;
     private void showHintPopup() {
+        // 输入问题
+        String question = "What is the capital of France?";
+/*
+        // 调用 ChatGPT 接口
+        ChatGPTClient.sendMessage(question, new Callback() {
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+
+                    // 解析返回结果
+                    JsonObject jsonResponse = JsonParser.parseString(responseBody).getAsJsonObject();
+
+                    // 保存为 String
+                    quetionResult = jsonResponse
+                            .getAsJsonArray("choices")
+                            .get(0).getAsJsonObject()
+                            .get("message").getAsJsonObject()
+                            .get("content").getAsString();
+                } else {
+                    quetionResult = "请求失败，错误信息：" + response.message();
+                    System.err.println("请求失败，错误信息：" + response.message());
+                    System.err.println("请求失败，状态碼：" + response.code());
+                    System.err.println("错误内容：" + response.body().string());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                quetionResult = "请求失败：" + e.getMessage();
+            }
+        });*/
         new AlertDialog.Builder(this)
                 .setTitle("Are you sure?")
                 .setMessage("Warning, will deduct points.")
@@ -206,7 +246,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
     private void showHintDetailsPopup() {
         new AlertDialog.Builder(this)
                 .setTitle("Hint")
-                .setMessage("Here is your hint: Look closer at the location!")
+                .setMessage(quetionResult)
                 .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                 .show();
     }

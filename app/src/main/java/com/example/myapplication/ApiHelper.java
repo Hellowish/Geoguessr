@@ -10,11 +10,11 @@ public class ApiHelper {
 
     private static final String BASE_URL = "http://140.136.151.146/geo/coordinate.php";
 
-    public static void fetchCoordinates(Context context, int id,
+    public static void fetchCoordinates(Context context, String town, String city,
                                         Response.Listener<JSONObject> listener,
                                         Response.ErrorListener errorListener) {
         // 組合請求 URL
-        String url = BASE_URL + "?id=" + id;
+        String url = BASE_URL + "?city=" + city + "&town=" + town;
 
         // 建立 JSON 請求
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
