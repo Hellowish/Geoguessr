@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -7,16 +8,26 @@ import okhttp3.MediaType;
 import okhttp3.Callback;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class ChatGPTClient {
-    private static final String API_URL = "https://api.openai.com/v1/chat/completions";
-    private static final String API_KEY = "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";
 
-    public static void sendMessage(String userMessage, Callback callback) {
+    private Context context;
+
+    // 構造函數接收 Context 參數
+    public ChatGPTClient(Context context) {
+        this.context = context;
+    }
+
+    private static final String API_URL = "https://api.openai.com/v1/chat/completions";
+
+    // 不再是靜態方法，這樣可以正常使用 context.getString()
+    public void sendMessage(String userMessage, Callback callback) {
         OkHttpClient client = new OkHttpClient();
 
-        // 创建JSON请求体
+        // 使用傳入的 context 來獲取 API Key
+        String openAIKey = context.getString(R.string.openai_api_key);
+
+        // 創建 JSON 請求體
         JsonObject jsonBody = new JsonObject();
         jsonBody.addProperty("model", "gpt-3.5-turbo");
 
@@ -33,10 +44,10 @@ public class ChatGPTClient {
                 MediaType.parse("application/json")
         );
 
-        // 创建请求
+        // 創建請求
         Request request = new Request.Builder()
                 .url(API_URL)
-                .addHeader("Authorization", "Bearer " + API_KEY)
+                .addHeader("Authorization", "Bearer " + openAIKey)
                 .post(body)
                 .build();
 

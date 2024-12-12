@@ -54,6 +54,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
     private static StreetViewPanorama streetViewIns;
     private SupportMapFragment mapFragment;
+    private ChatGPTClient client;
 
     private TextView timerText;
     private CountDownTimer countDownTimer;
@@ -67,6 +68,8 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_play);
+
+        client = new ChatGPTClient(this);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -213,7 +216,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
                 "，提供其文化、地理或歷史相關的線索，但不要直接說出縣市或行政區的名稱，讓人通過線索猜出是什麼地方，不要太多字。";
 
         // 调用 ChatGPT 接口
-        ChatGPTClient.sendMessage(question, new Callback() {
+        client.sendMessage(question, new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
                 if (response.isSuccessful()) {
