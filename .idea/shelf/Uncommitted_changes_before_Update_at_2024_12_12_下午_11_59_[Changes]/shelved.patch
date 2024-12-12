@@ -1,0 +1,310 @@
+Index: app/src/main/res/layout/activity_main_play.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:id=\"@+id/main\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".MainPlay\">\r\n\r\n    <androidx.fragment.app.FragmentContainerView\r\n        android:id=\"@+id/streetview_fragment\"\r\n        android:name=\"com.google.android.gms.maps.SupportStreetViewPanoramaFragment\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.0\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.0\" />\r\n\r\n    <androidx.fragment.app.FragmentContainerView\r\n        android:id=\"@+id/map_fragment\"\r\n        android:name=\"com.google.android.gms.maps.SupportMapFragment\"\r\n        android:layout_width=\"411dp\"\r\n        android:layout_height=\"730dp\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.0\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.5\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/timer_text\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"0\"\r\n        android:textColor=\"#000000\"\r\n        android:textSize=\"60sp\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        tools:layout_editor_absoluteX=\"28dp\" />\r\n\r\n    <Button\r\n        android:id=\"@+id/hint\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:backgroundTint=\"@color/purple_500\"\r\n        android:text=\"Hint\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.212\"\r\n        app:layout_constraintStart_toEndOf=\"@+id/timer_text\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.023\" />\r\n\r\n    <ImageButton\r\n        android:id=\"@+id/expand\"\r\n        android:layout_width=\"100dp\"\r\n        android:layout_height=\"100dp\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.948\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.941\"\r\n        app:srcCompat=\"@drawable/_7\" />\r\n\r\n    <Button\r\n        android:id=\"@+id/Answer\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"612dp\"\r\n        android:layout_marginEnd=\"56dp\"\r\n        android:backgroundTint=\"@color/purple_500\"\r\n        android:text=\"Answer\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toStartOf=\"@+id/expand\"\r\n        app:layout_constraintHorizontal_bias=\"0.923\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"@+id/streetview_fragment\"\r\n        app:layout_constraintVertical_bias=\"1.0\" />\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_main_play.xml b/app/src/main/res/layout/activity_main_play.xml
+--- a/app/src/main/res/layout/activity_main_play.xml	(revision 157af101369a46406679852640f54c2588c85170)
++++ b/app/src/main/res/layout/activity_main_play.xml	(date 1734017848861)
+@@ -29,7 +29,7 @@
+         app:layout_constraintHorizontal_bias="0.0"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintVertical_bias="0.5" />
++        app:layout_constraintVertical_bias="1.0" />
+ 
+     <TextView
+         android:id="@+id/timer_text"
+@@ -81,4 +81,13 @@
+         app:layout_constraintTop_toTopOf="@+id/streetview_fragment"
+         app:layout_constraintVertical_bias="1.0" />
+ 
++    <FrameLayout
++        android:id="@+id/fragment_container"
++        android:layout_width="400dp"
++        android:layout_height="800dp"
++        app:layout_constraintEnd_toEndOf="parent"
++        tools:layout_editor_absoluteY="363dp">
++
++    </FrameLayout>
++
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/myapplication/MainPlay.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.os.CountDownTimer;\r\nimport android.util.Log;\r\nimport android.widget.ImageButton;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.activity.EdgeToEdge;\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AlertDialog;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.core.graphics.Insets;\r\nimport androidx.core.view.ViewCompat;\r\nimport androidx.core.view.WindowInsetsCompat;\r\n\r\nimport com.android.volley.Response;\r\nimport com.android.volley.VolleyError;\r\nimport com.google.android.gms.maps.CameraUpdateFactory;\r\nimport com.google.android.gms.maps.GoogleMap;\r\nimport com.google.android.gms.maps.OnMapReadyCallback;\r\nimport com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;\r\nimport com.google.android.gms.maps.StreetViewPanorama;\r\nimport com.google.android.gms.maps.SupportMapFragment;\r\nimport com.google.android.gms.maps.SupportStreetViewPanoramaFragment;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.android.gms.maps.model.Marker;\r\nimport com.google.android.gms.maps.model.MarkerOptions;\r\nimport com.google.android.gms.maps.model.StreetViewPanoramaCamera;\r\nimport com.google.android.gms.maps.model.StreetViewPanoramaOrientation;\r\n\r\nimport okhttp3.Callback;\r\nimport okhttp3.Call;\r\nimport com.google.gson.JsonObject;\r\nimport com.google.gson.JsonParser;\r\n\r\nimport java.io.IOException;\r\n\r\nimport org.json.JSONObject;\r\n\r\npublic class MainPlay extends AppCompatActivity implements OnMapReadyCallback, OnStreetViewPanoramaReadyCallback {\r\n\r\n    private static LatLng answerCord;\r\n    private static LatLng streetViewCoordinate;\r\n\r\n    public static double maxDistance;\r\n    public static String city;\r\n    public static String town;\r\n\r\n    private Marker currentMarker;\r\n    private GoogleMap mapIns;\r\n\r\n    private static StreetViewPanorama streetViewIns;\r\n    private SupportMapFragment mapFragment;\r\n\r\n    private TextView timerText;\r\n    private CountDownTimer countDownTimer;\r\n    private long timeLeftInMillis = 300000; // 30 seconds in milliseconds\r\n\r\n    private ImageButton expandButton;\r\n    private boolean isMapFragmentVisible = false;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        EdgeToEdge.enable(this);\r\n        setContentView(R.layout.activity_main_play);\r\n\r\n        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {\r\n            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());\r\n            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);\r\n            return insets;\r\n        });\r\n\r\n        // Retrieve qlatLng from Intent\r\n        streetViewCoordinate = getIntent().getParcelableExtra(\"qlatLng\");\r\n        maxDistance = getIntent().getDoubleExtra(\"maxDistance\", 200);\r\n        city = getIntent().getStringExtra(\"city\");\r\n        town = getIntent().getStringExtra(\"town\");\r\n\r\n\r\n        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);\r\n        if (mapFragment != null)\r\n            mapFragment.getMapAsync(this);\r\n\r\n        SupportStreetViewPanoramaFragment streetViewFragment = (SupportStreetViewPanoramaFragment) getSupportFragmentManager().findFragmentById(R.id.streetview_fragment);\r\n        if (streetViewFragment != null)\r\n            streetViewFragment.getStreetViewPanoramaAsync(this);\r\n\r\n        // Initialize timer TextView\r\n        timerText = findViewById(R.id.timer_text);\r\n\r\n        // Initialize expand button\r\n        expandButton = findViewById(R.id.expand);\r\n        expandButton.setOnClickListener(v -> toggleFragmentVisibility());\r\n\r\n        // Start the countdown timer\r\n        startTimer();\r\n\r\n        // Set up the hint button\r\n        findViewById(R.id.hint).setOnClickListener(view -> showHintPopup());\r\n        getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();\r\n        // Set up the answer button\r\n        findViewById(R.id.Answer).setOnClickListener(v -> navigateToScoreActivity());\r\n    }\r\n\r\n    private void toggleFragmentVisibility() {\r\n        if (mapFragment != null) {\r\n            if (isMapFragmentVisible) {\r\n                getSupportFragmentManager()\r\n                        .beginTransaction()\r\n                        .hide(mapFragment)\r\n                        .commit();\r\n                expandButton.setImageResource(R.drawable._7); // Update icon\r\n            } else {\r\n                getSupportFragmentManager()\r\n                        .beginTransaction()\r\n                        .show(mapFragment)\r\n                        .commit();\r\n                expandButton.setImageResource(R.drawable._7); // Update icon\r\n            }\r\n            isMapFragmentVisible = !isMapFragmentVisible;\r\n        }\r\n    }\r\n\r\n    private void startTimer() {\r\n        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {\r\n            @Override\r\n            public void onTick(long millisUntilFinished) {\r\n                timeLeftInMillis = millisUntilFinished;\r\n                updateTimerText();\r\n            }\r\n\r\n            @Override\r\n            public void onFinish() {\r\n                switchToFailurePage();\r\n            }\r\n        }.start();\r\n    }\r\n\r\n    private void updateTimerText() {\r\n        int seconds = (int) (timeLeftInMillis / 1000);\r\n        timerText.setText(String.valueOf(seconds));\r\n    }\r\n\r\n    private void switchToFailurePage() {\r\n        Intent intent = new Intent(MainPlay.this, FailureActivity.class);\r\n        startActivity(intent);\r\n        finish(); // Optional: Close the current activity\r\n    }\r\n    private void navigateToScoreActivity() {\r\n        double score = calculateScore(); // Calculate the score\r\n        Intent intent = new Intent(MainPlay.this, Score.class);\r\n        intent.putExtra(\"score\", score); // Pass score to ScoreActivity\r\n        startActivity(intent);\r\n        finish(); // Optional: Close the current activity\r\n    }\r\n    @Override\r\n    public void onMapReady(@NonNull GoogleMap map) {\r\n        mapIns = map;\r\n        mapIns.setMapType(GoogleMap.MAP_TYPE_NORMAL);\r\n        mapIns.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(23.975667, 120.973861), 8f));\r\n        mapIns.getUiSettings().setRotateGesturesEnabled(false);\r\n\r\n        mapIns.setOnMapClickListener(new GoogleMap.OnMapClickListener() {\r\n            @Override\r\n            public void onMapClick(@NonNull LatLng latLng) {\r\n                if (currentMarker != null) {\r\n                    currentMarker.remove();\r\n                }\r\n                answerCord = latLng;\r\n                // 在點擊位置新增 Marker\r\n                currentMarker = mapIns.addMarker(new MarkerOptions()\r\n                        .position(latLng) // Marker 的位置\r\n                        .title(\"位置\") // Marker 的標題\r\n                        .snippet(\"經緯度: \" + latLng.latitude + \", \" + latLng.longitude)); // 顯示詳細信息\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    public void onStreetViewPanoramaReady(StreetViewPanorama streetViewPanorama) {\r\n        streetViewIns = streetViewPanorama;\r\n\r\n        streetViewPanorama.setPanningGesturesEnabled(true);\r\n        streetViewPanorama.setUserNavigationEnabled(true);\r\n        streetViewPanorama.setZoomGesturesEnabled(true);\r\n        streetViewPanorama.animateTo(\r\n                new StreetViewPanoramaCamera.Builder()\r\n                        .orientation(new StreetViewPanoramaOrientation(20, 20))\r\n                        .zoom(streetViewPanorama.getPanoramaCamera().zoom)\r\n                        .build(), 2000\r\n        );\r\n\r\n        streetViewIns.setPosition(streetViewCoordinate);\r\n    }\r\n\r\n    String quetionResult = null;\r\n    private void showHintPopup() {\r\n        new AlertDialog.Builder(this)\r\n                .setTitle(\"Are you sure?\")\r\n                .setMessage(\"Warning, will deduct points.\")\r\n                .setPositiveButton(\"Yes\", (dialog, which) -> showHintDetailsPopup())\r\n                .setNegativeButton(\"No\", (dialog, which) -> dialog.dismiss())\r\n                .show();\r\n    }\r\n\r\n    private void showHintDetailsPopup() {\r\n        // 输入问题\r\n        String question = \"請根據\" + city + town +\r\n                \"，提供其文化、地理或歷史相關的線索，但不要直接說出縣市或行政區的名稱，讓人通過線索猜出是什麼地方，不要太多字。\";\r\n\r\n        // 调用 ChatGPT 接口\r\n        ChatGPTClient.sendMessage(question, new Callback() {\r\n            @Override\r\n            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {\r\n                if (response.isSuccessful()) {\r\n                    String responseBody = response.body().string();\r\n\r\n                    // 解析返回结果\r\n                    JsonObject jsonResponse = JsonParser.parseString(responseBody).getAsJsonObject();\r\n                    // 获取消息内容\r\n                    String message = jsonResponse\r\n                            .getAsJsonArray(\"choices\")\r\n                            .get(0).getAsJsonObject()\r\n                            .get(\"message\").getAsJsonObject()\r\n                            .get(\"content\").getAsString();\r\n\r\n                    // 确保在主线程中更新 UI\r\n                    runOnUiThread(() -> {\r\n                        // 确保提示内容不为空\r\n                        if (message != null && !message.isEmpty()) {\r\n                            showHint(message);\r\n                        } else {\r\n                            showError(\"No hint available.\");\r\n                        }\r\n                    });\r\n                } else {\r\n                    // 失败时处理\r\n                    String errorMessage = \"Request failed with status: \" + response.code();\r\n                    runOnUiThread(() -> showError(errorMessage));\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onFailure(@NonNull Call call, @NonNull IOException e) {\r\n                String errorMessage = \"Request failed: \" + e.getMessage();\r\n                runOnUiThread(() -> showError(errorMessage));\r\n            }\r\n        });\r\n    }\r\n\r\n    private void showHint(String message) {\r\n        new AlertDialog.Builder(MainPlay.this)\r\n                .setTitle(\"Hint\")\r\n                .setMessage(message)\r\n                .setPositiveButton(\"OK\", (dialog, which) -> dialog.dismiss())\r\n                .show();\r\n    }\r\n\r\n    private void showError(String errorMessage) {\r\n        Toast.makeText(MainPlay.this, errorMessage, Toast.LENGTH_LONG).show();\r\n    }\r\n\r\n    // 計算兩個經緯度點之間的距離（單位：公里）\r\n    public static double haversine(double lat1, double lon1, double lat2, double lon2) {\r\n        // 轉換為弧度\r\n        lat1 = Math.toRadians(lat1);\r\n        lon1 = Math.toRadians(lon1);\r\n        lat2 = Math.toRadians(lat2);\r\n        lon2 = Math.toRadians(lon2);\r\n\r\n        // 哈弗辛公式\r\n        double dLat = lat2 - lat1;\r\n        double dLon = lon2 - lon1;\r\n        double a = Math.pow(Math.sin(dLat / 2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dLon / 2), 2);\r\n        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));\r\n\r\n        // 地球半徑（公里）\r\n        double R = 6371.0;\r\n        double distance = R * c;\r\n        return distance;\r\n    }\r\n\r\n    public static double calculateScore() {\r\n        // 計算距離\r\n        double distance = haversine(streetViewCoordinate.latitude, streetViewCoordinate.longitude,\r\n                answerCord.latitude, answerCord.longitude);\r\n        // 計算分數\r\n        return Math.max(0, 100 - (distance / maxDistance) * 100);\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/MainPlay.java b/app/src/main/java/com/example/myapplication/MainPlay.java
+--- a/app/src/main/java/com/example/myapplication/MainPlay.java	(revision 157af101369a46406679852640f54c2588c85170)
++++ b/app/src/main/java/com/example/myapplication/MainPlay.java	(date 1734018987057)
+@@ -1,5 +1,8 @@
+ package com.example.myapplication;
+ 
++import androidx.fragment.app.Fragment;
++import androidx.fragment.app.FragmentTransaction;
++import androidx.fragment.app.FragmentManager;
+ import android.content.Intent;
+ import android.os.Bundle;
+ import android.os.CountDownTimer;
+@@ -103,9 +106,27 @@
+         findViewById(R.id.hint).setOnClickListener(view -> showHintPopup());
+         getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();
+         // Set up the answer button
+-        findViewById(R.id.Answer).setOnClickListener(v -> navigateToScoreActivity());
++        findViewById(R.id.Answer).setOnClickListener(v -> showScoreFragment());
+     }
+ 
++    private void showScoreFragment() {
++        // You can create a new instance of the ScoreFragment and pass necessary arguments to it
++        ScoreFragment scoreFragment = ScoreFragment.newInstance(calculateScore()); // Example: passing a static score for now
++
++        // Begin the fragment transaction
++        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
++
++        // Apply the animation
++        transaction.setCustomAnimations(
++                R.anim.fragment_slide_in,  // Fragment enter animation
++                R.anim.fragment_slide_out // Fragment exit animation
++        );
++
++        // Replace the container with the score fragment
++        transaction.replace(R.id.fragment_container, scoreFragment);
++        transaction.addToBackStack(null); // Optional: Add to back stack
++        transaction.commit();
++    }
+     private void toggleFragmentVisibility() {
+         if (mapFragment != null) {
+             if (isMapFragmentVisible) {
+Index: app/src/main/res/layout/activity_score.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:id=\"@+id/main\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".Score\">\r\n\r\n    <TextView\r\n        android:id=\"@+id/score_text\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"Score\"\r\n        android:textSize=\"34sp\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.5\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.5\" />\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_score.xml b/app/src/main/res/layout/activity_score.xml
+--- a/app/src/main/res/layout/activity_score.xml	(revision 157af101369a46406679852640f54c2588c85170)
++++ b/app/src/main/res/layout/activity_score.xml	(date 1734011660757)
+@@ -12,7 +12,7 @@
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="Score"
+-        android:textSize="34sp"
++        android:textSize="96sp"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintHorizontal_bias="0.5"
+Index: app/src/main/res/layout/fragment_score.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_score.xml b/app/src/main/res/layout/fragment_score.xml
+new file mode 100644
+--- /dev/null	(date 1734018022118)
++++ b/app/src/main/res/layout/fragment_score.xml	(date 1734018022118)
+@@ -0,0 +1,16 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:orientation="vertical"
++    android:padding="16dp"
++    android:background="@drawable/idk"
++    android:gravity="center">
++
++
++    <TextView
++        android:id="@+id/score_text"
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:textSize="96sp" />
++</LinearLayout>
+Index: app/src/main/java/com/example/myapplication/ScoreFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/ScoreFragment.java b/app/src/main/java/com/example/myapplication/ScoreFragment.java
+new file mode 100644
+--- /dev/null	(date 1734015844683)
++++ b/app/src/main/java/com/example/myapplication/ScoreFragment.java	(date 1734015844683)
+@@ -0,0 +1,87 @@
++package com.example.myapplication;
++
++import android.os.Bundle;
++import android.os.Handler;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++import android.widget.TextView;
++
++import androidx.fragment.app.Fragment;
++
++public class ScoreFragment extends Fragment {
++
++    private TextView scoreTextView;
++
++    public ScoreFragment() {
++        // Required empty public constructor
++    }
++
++    public static ScoreFragment newInstance(double score) {
++        ScoreFragment fragment = new ScoreFragment();
++        Bundle args = new Bundle();
++        args.putDouble("score", score);
++        fragment.setArguments(args);
++        return fragment;
++    }
++
++    @Override
++    public View onCreateView(LayoutInflater inflater, ViewGroup container,
++                             Bundle savedInstanceState) {
++        // Inflate the fragment layout
++        return inflater.inflate(R.layout.fragment_score, container, false);
++    }
++
++    @Override
++    public void onViewCreated(View view, Bundle savedInstanceState) {
++        super.onViewCreated(view, savedInstanceState);
++
++        // Get the score from arguments
++        double score = getArguments() != null ? getArguments().getDouble("score", 0) : 0;
++
++        // Get the TextView for displaying the score
++        scoreTextView = view.findViewById(R.id.score_text);
++
++        // Animate the score
++        animateScore(score);
++    }
++
++    private void animateScore(final double finalScore) {
++        // Duration for the animation (in milliseconds)
++        int animationDuration = 2000; // 2 seconds
++
++        // The interval between updates (in milliseconds)
++        int updateInterval = 50;
++
++        // The number of updates (based on the animation duration)
++        int numberOfUpdates = animationDuration / updateInterval;
++
++        // The increment for each update (based on the final score and number of updates)
++        final double increment = finalScore / numberOfUpdates;
++
++        // Mutable variable to hold the current score during animation
++        final double[] currentScore = {0};
++
++        // Use a Handler to update the score every updateInterval milliseconds
++        new Handler().postDelayed(new Runnable() {
++            @Override
++            public void run() {
++                if (currentScore[0] < finalScore) {
++                    // Increment the current score
++                    currentScore[0] += increment;
++
++                    // Ensure the score doesn't exceed the final score
++                    if (currentScore[0] > finalScore) {
++                        currentScore[0] = finalScore;
++                    }
++
++                    // Update the TextView with the current score (formatted to 2 decimal places)
++                    scoreTextView.setText(String.format("%.0f", 100 * currentScore[0]));
++
++                    // Repeat this update after the defined interval
++                    new Handler().postDelayed(this, updateInterval);
++                }
++            }
++        }, updateInterval);
++    }
++}
+Index: app/src/main/res/anim/fragment_slide_in.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/anim/fragment_slide_in.xml b/app/src/main/res/anim/fragment_slide_in.xml
+new file mode 100644
+--- /dev/null	(date 1734018481762)
++++ b/app/src/main/res/anim/fragment_slide_in.xml	(date 1734018481762)
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<set xmlns:android="http://schemas.android.com/apk/res/android">
++    <translate
++        android:duration="500"
++        android:fromXDelta="100%p"
++        android:toXDelta="0%p"/>
++</set>
+Index: app/src/main/res/anim/fragment_slide_out.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/anim/fragment_slide_out.xml b/app/src/main/res/anim/fragment_slide_out.xml
+new file mode 100644
+--- /dev/null	(date 1734018489546)
++++ b/app/src/main/res/anim/fragment_slide_out.xml	(date 1734018489546)
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<set xmlns:android="http://schemas.android.com/apk/res/android">
++    <translate
++        android:duration="500"
++        android:fromXDelta="0%p"
++        android:toXDelta="-100%p"/>
++</set>
+Index: app/src/main/java/com/example/myapplication/Score.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication;\r\n\r\nimport android.os.Bundle;\r\nimport android.os.Handler;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.activity.EdgeToEdge;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.core.graphics.Insets;\r\nimport androidx.core.view.ViewCompat;\r\nimport androidx.core.view.WindowInsetsCompat;\r\n\r\npublic class Score extends AppCompatActivity {\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_score);\r\n\r\n        // Retrieve the score passed from the previous activity\r\n        double score = getIntent().getDoubleExtra(\"score\", 0);\r\n\r\n        // Get the TextView for displaying the score\r\n        TextView scoreText = findViewById(R.id.score_text);\r\n\r\n        // Animate the score\r\n        animateScore(score, scoreText);\r\n    }\r\n\r\n    private void animateScore(final double finalScore, final TextView scoreTextView) {\r\n        // Duration for the animation (in milliseconds)\r\n        int animationDuration = 2000; // 2 seconds\r\n\r\n        // The interval between updates (in milliseconds)\r\n        int updateInterval = 50;\r\n\r\n        // The number of updates (based on the animation duration)\r\n        int numberOfUpdates = animationDuration / updateInterval;\r\n\r\n        // The increment for each update (based on the final score and number of updates)\r\n        final double increment = finalScore / numberOfUpdates;\r\n\r\n        // Mutable variable to hold the current score during animation\r\n        final double[] currentScore = {0};\r\n\r\n        // Use a Handler to update the score every updateInterval milliseconds\r\n        new Handler().postDelayed(new Runnable() {\r\n            @Override\r\n            public void run() {\r\n                if (currentScore[0] < finalScore) {\r\n                    // Increment the current score\r\n                    currentScore[0] += increment;\r\n\r\n                    // Ensure the score doesn't exceed the final score\r\n                    if (currentScore[0] > finalScore) {\r\n                        currentScore[0] = finalScore;\r\n                    }\r\n\r\n                    // Update the TextView with the current score (formatted to 2 decimal places)\r\n                    scoreTextView.setText(String.format(\"Your Score: %.2f\", currentScore[0]));\r\n\r\n                    // Repeat this update after the defined interval\r\n                    new Handler().postDelayed(this, updateInterval);\r\n                }\r\n            }\r\n        }, updateInterval);\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/Score.java b/app/src/main/java/com/example/myapplication/Score.java
+--- a/app/src/main/java/com/example/myapplication/Score.java	(revision 157af101369a46406679852640f54c2588c85170)
++++ b/app/src/main/java/com/example/myapplication/Score.java	(date 1734015409723)
+@@ -57,7 +57,7 @@
+                     }
+ 
+                     // Update the TextView with the current score (formatted to 2 decimal places)
+-                    scoreTextView.setText(String.format("Your Score: %.2f", currentScore[0]));
++                    scoreTextView.setText(String.format("%.0f", 100*currentScore[0]));
+ 
+                     // Repeat this update after the defined interval
+                     new Handler().postDelayed(this, updateInterval);
+Index: app/src/main/res/anim/slide_in_up.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/anim/slide_in_up.xml b/app/src/main/res/anim/slide_in_up.xml
+new file mode 100644
+--- /dev/null	(date 1734014499027)
++++ b/app/src/main/res/anim/slide_in_up.xml	(date 1734014499027)
+@@ -0,0 +1,4 @@
++<!-- res/anim/slide_in_up.xml -->
++<translate xmlns:android="http://schemas.android.com/apk/res/android"
++    android:fromYDelta="100%" android:toYDelta="0%"
++    android:duration="500" />
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources>\r\n    <string name=\"app_name\">GeoGuesser</string>\r\n\r\n    <string name=\"map_api_key\">AIzaSyCaWiPJQx-T7kGbUvOKhNIomNMC0Rz94a4</string>\r\n\r\n    <string-array name=\"cities\">\r\n        <item id=\"taipei_city\">台北市</item>\r\n        <item>新北市</item>\r\n        <item>桃園市</item>\r\n        <item>台中市</item>\r\n        <item>台南市</item>\r\n        <item>高雄市</item>\r\n        <item>基隆市</item>\r\n        <item>新竹市</item>\r\n        <item>嘉義市</item>\r\n        <item>宜蘭縣</item>\r\n        <item>新竹縣</item>\r\n        <item>苗栗縣</item>\r\n        <item>彰化縣</item>\r\n        <item>南投縣</item>\r\n        <item>雲林縣</item>\r\n        <item>嘉義縣</item>\r\n        <item>屏東縣</item>\r\n        <item>臺東縣</item>\r\n        <item>花蓮縣</item>\r\n        <item>澎湖縣</item>\r\n        <item>金門縣</item>\r\n        <item>連江縣</item>\r\n        <item>全部</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_taipei\">\r\n        <item>中正區</item>\r\n        <item>大同區</item>\r\n        <item>中山區</item>\r\n        <item>松山區</item>\r\n        <item>大安區</item>\r\n        <item>萬華區</item>\r\n        <item>信義區</item>\r\n        <item>士林區</item>\r\n        <item>北投區</item>\r\n        <item>內湖區</item>\r\n        <item>南港區</item>\r\n        <item>文山區</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_newtaipei\">\r\n        <item>板橋區</item>\r\n        <item>三重區</item>\r\n        <item>中和區</item>\r\n        <item>永和區</item>\r\n        <item>新莊區</item>\r\n        <item>土城區</item>\r\n        <item>蘆洲區</item>\r\n        <item>樹林區</item>\r\n        <item>鶯歌區</item>\r\n        <item>三峽區</item>\r\n        <item>淡水區</item>\r\n        <item>汐止區</item>\r\n        <item>瑞芳區</item>\r\n        <item>貢寮區</item>\r\n        <item>金山區</item>\r\n        <item>萬里區</item>\r\n        <item>林口區</item>\r\n        <item>平溪區</item>\r\n        <item>雙溪區</item>\r\n        <item>九份</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_taoyuan\">\r\n        <item>桃園區</item>\r\n        <item>中壢區</item>\r\n        <item>大溪區</item>\r\n        <item>楊梅區</item>\r\n        <item>蘆竹區</item>\r\n        <item>大園區</item>\r\n        <item>龜山區</item>\r\n        <item>龍潭區</item>\r\n        <item>平鎮區</item>\r\n        <item>新屋區</item>\r\n        <item>觀音區</item>\r\n        <item>復興區</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_taichung\">\r\n        <item>中區</item>\r\n        <item>東區</item>\r\n        <item>南區</item>\r\n        <item>西區</item>\r\n        <item>北區</item>\r\n        <item>西屯區</item>\r\n        <item>南屯區</item>\r\n        <item>北屯區</item>\r\n        <item>豐原區</item>\r\n        <item>大里區</item>\r\n        <item>太平區</item>\r\n        <item>南區</item>\r\n        <item>潭子區</item>\r\n        <item>大甲區</item>\r\n        <item>清水區</item>\r\n        <item>梧棲區</item>\r\n        <item>龍井區</item>\r\n        <item>霧峰區</item>\r\n        <item>大安區</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_tainan\">\r\n        <item>中西區</item>\r\n        <item>東區</item>\r\n        <item>南區</item>\r\n        <item>北區</item>\r\n        <item>安平區</item>\r\n        <item>安南區</item>\r\n        <item>永康區</item>\r\n        <item>歸仁區</item>\r\n        <item>新化區</item>\r\n        <item>左鎮區</item>\r\n        <item>玉井區</item>\r\n        <item>楠西區</item>\r\n        <item>南化區</item>\r\n        <item>仁德區</item>\r\n        <item>關廟區</item>\r\n        <item>龍崎區</item>\r\n        <item>台南市區</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_kaohsiung\">\r\n        <item>鹽埕區</item>\r\n        <item>鼓山區</item>\r\n        <item>旗津區</item>\r\n        <item>前金區</item>\r\n        <item>三民區</item>\r\n        <item>楠梓區</item>\r\n        <item>小港區</item>\r\n        <item>左營區</item>\r\n        <item>苓雅區</item>\r\n        <item>前鎮區</item>\r\n        <item>大寮區</item>\r\n        <item>大樹區</item>\r\n        <item>鳳山區</item>\r\n        <item>仁武區</item>\r\n        <item>長治區</item>\r\n        <item>林園區</item>\r\n        <item>三寶區</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_keelung\">\r\n        <item>中正區</item>\r\n        <item>七堵區</item>\r\n        <item>基隆市區</item>\r\n        <item>安樂區</item>\r\n        <item>信義區</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_hsinchu\">\r\n        <item>東區</item>\r\n        <item>北區</item>\r\n        <item>香山區</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_chiayi\">\r\n        <item>東區</item>\r\n        <item>西區</item>\r\n        <item>南區</item>\r\n        <item>北區</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_yilan\">\r\n        <item>宜蘭市</item>\r\n        <item>頭城鎮</item>\r\n        <item>礁溪鄉</item>\r\n        <item>壯圍鄉</item>\r\n        <item>員山鄉</item>\r\n        <item>羅東鎮</item>\r\n        <item>三星鄉</item>\r\n        <item>大同鄉</item>\r\n        <item>五結鄉</item>\r\n        <item>冬山鄉</item>\r\n        <item>蘇澳鎮</item>\r\n        <item>南澳鄉</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_hsinchucounty\">\r\n        <item>竹北市</item>\r\n        <item>湖口鄉</item>\r\n        <item>新豐鄉</item>\r\n        <item>新埔鎮</item>\r\n        <item>關西鎮</item>\r\n        <item>芎林鄉</item>\r\n        <item>橫山鄉</item>\r\n        <item>立德鄉</item>\r\n        <item>峨眉鄉</item>\r\n        <item>寶山鄉</item>\r\n        <item>竹東鎮</item>\r\n        <item>五峰鄉</item>\r\n        <item>尖石鄉</item>\r\n        <item>北埔鄉</item>\r\n        <item>峨眉鄉</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_miaoli\">\r\n        <item>苗栗市</item>\r\n        <item>苑裡鎮</item>\r\n        <item>通霄鎮</item>\r\n        <item>竹南鎮</item>\r\n        <item>後龍鎮</item>\r\n        <item>獅潭鄉</item>\r\n        <item>三灣鄉</item>\r\n        <item>鶴岡鄉</item>\r\n        <item>大湖鄉</item>\r\n        <item>卓蘭鎮</item>\r\n        <item>銅鑼鄉</item>\r\n        <item>三義鄉</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_changhua\">\r\n        <item>彰化市</item>\r\n        <item>鹿港鎮</item>\r\n        <item>和美鎮</item>\r\n        <item>線西鄉</item>\r\n        <item>伸港鄉</item>\r\n        <item>福興鄉</item>\r\n        <item>大村鄉</item>\r\n        <item>埔心鄉</item>\r\n        <item>永靖鄉</item>\r\n        <item>溪州鄉</item>\r\n        <item>花壇鄉</item>\r\n        <item>大竹鄉</item>\r\n        <item>二林鎮</item>\r\n        <item>田中鎮</item>\r\n        <item>北斗鎮</item>\r\n        <item>田尾鄉</item>\r\n        <item>埤頭鄉</item>\r\n        <item>社頭鄉</item>\r\n        <item>大城鄉</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_nantou\">\r\n        <item>南投市</item>\r\n        <item>埔里鎮</item>\r\n        <item>草屯鎮</item>\r\n        <item>竹山鎮</item>\r\n        <item>集集鎮</item>\r\n        <item>名間鄉</item>\r\n        <item>鹿谷鄉</item>\r\n        <item>中寮鄉</item>\r\n        <item>魚池鄉</item>\r\n        <item>水里鄉</item>\r\n        <item>信義鄉</item>\r\n        <item>仁愛鄉</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_yunlin\">\r\n        <item>斗六市</item>\r\n        <item>斗南鎮</item>\r\n        <item>虎尾鎮</item>\r\n        <item>西螺鎮</item>\r\n        <item>土庫鎮</item>\r\n        <item>褒忠鄉</item>\r\n        <item>大埤鄉</item>\r\n        <item>莿桐鄉</item>\r\n        <item>林內鄉</item>\r\n        <item>二崙鄉</item>\r\n        <item>崙背鄉</item>\r\n        <item>麥寮鄉</item>\r\n        <item>東勢鄉</item>\r\n        <item>台西鄉</item>\r\n        <item>四湖鄉</item>\r\n        <item>口湖鄉</item>\r\n        <item>水林鄉</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_chiayicounty\">\r\n        <item>太保市</item>\r\n        <item>朴子市</item>\r\n        <item>布袋鎮</item>\r\n        <item>大林鎮</item>\r\n        <item>民雄鄉</item>\r\n        <item>溪口鄉</item>\r\n        <item>新港鄉</item>\r\n        <item>阿里山鄉</item>\r\n        <item>東石鄉</item>\r\n        <item>六腳鄉</item>\r\n        <item>竹崎鄉</item>\r\n        <item>梅山鄉</item>\r\n        <item>番路鄉</item>\r\n        <item>中埔鄉</item>\r\n        <item>水上鄉</item>\r\n        <item>永康鄉</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_pingtung\">\r\n        <item>屏東市</item>\r\n        <item>潮州鎮</item>\r\n        <item>東港鎮</item>\r\n        <item>恆春鎮</item>\r\n        <item>萬丹鄉</item>\r\n        <item>長治鄉</item>\r\n        <item>麟洛鄉</item>\r\n        <item>九如鄉</item>\r\n        <item>里港鄉</item>\r\n        <item>鹽埔鄉</item>\r\n        <item>高樹鄉</item>\r\n        <item>美濃鎮</item>\r\n        <item>內埔鄉</item>\r\n        <item>萬巒鄉</item>\r\n        <item>竹田鄉</item>\r\n        <item>三地門鄉</item>\r\n        <item>枋寮鄉</item>\r\n        <item>枋山鄉</item>\r\n        <item>新園鄉</item>\r\n        <item>崁頂鄉</item>\r\n        <item>南州鄉</item>\r\n        <item>屏東市區</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_taitung\">\r\n        <item>臺東市</item>\r\n        <item>成功鎮</item>\r\n        <item>關山鎮</item>\r\n        <item>長濱鄉</item>\r\n        <item>太麻里鄉</item>\r\n        <item>鹿野鄉</item>\r\n        <item>池上鄉</item>\r\n        <item>東河鄉</item>\r\n        <item>海端鄉</item>\r\n        <item>金峰鄉</item>\r\n        <item>大武鄉</item>\r\n        <item>達仁鄉</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_hualien\">\r\n        <item>花蓮市</item>\r\n        <item>吉安鄉</item>\r\n        <item>壽豐鄉</item>\r\n        <item>鳳林鎮</item>\r\n        <item>光復鄉</item>\r\n        <item>豐濱鄉</item>\r\n        <item>瑞穗鄉</item>\r\n        <item>富里鄉</item>\r\n        <item>秀林鄉</item>\r\n        <item>萬榮鄉</item>\r\n        <item>卓溪鄉</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_penghu\">\r\n        <item>馬公市</item>\r\n        <item>湖西鄉</item>\r\n        <item>白沙鄉</item>\r\n        <item>西嶼鄉</item>\r\n        <item>望安鄉</item>\r\n        <item>七美鄉</item>\r\n        <item>流行鄉</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_kinmen\">\r\n        <item>金城鎮</item>\r\n        <item>金湖鎮</item>\r\n        <item>金寧鄉</item>\r\n        <item>金門鄉</item>\r\n        <item>烈嶼鄉</item>\r\n        <item>烏坵鄉</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"towns_lianjiang\">\r\n        <item>南竿鄉</item>\r\n        <item>北竿鄉</item>\r\n        <item>莒光鄉</item>\r\n        <item>東引鄉</item>\r\n    </string-array>\r\n\r\n    <string-array name=\"taiwan\">\r\n        <item>全部</item>\r\n    </string-array>\r\n\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+--- a/app/src/main/res/values/strings.xml	(revision 157af101369a46406679852640f54c2588c85170)
++++ b/app/src/main/res/values/strings.xml	(date 1734014662805)
+@@ -372,5 +372,7 @@
+     <string-array name="taiwan">
+         <item>全部</item>
+     </string-array>
++    <!-- TODO: Remove or change this placeholder text -->
++    <string name="hello_blank_fragment">Hello blank fragment</string>
+ 
+ </resources>
+\ No newline at end of file

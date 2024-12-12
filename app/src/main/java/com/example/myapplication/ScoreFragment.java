@@ -2,32 +2,51 @@ package com.example.myapplication;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 
-public class Score extends AppCompatActivity {
+public class ScoreFragment extends Fragment {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_score);
+    private TextView scoreTextView;
 
-        // Retrieve the score passed from the previous activity
-        double score = getIntent().getDoubleExtra("score", 0);
-
-        // Get the TextView for displaying the score
-        TextView scoreText = findViewById(R.id.score_text);
-
-        // Animate the score
-        animateScore(score, scoreText);
+    public ScoreFragment() {
+        // Required empty public constructor
     }
 
-    private void animateScore(final double finalScore, final TextView scoreTextView) {
+    public static ScoreFragment newInstance(double score) {
+        ScoreFragment fragment = new ScoreFragment();
+        Bundle args = new Bundle();
+        args.putDouble("score", score);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the fragment layout
+        return inflater.inflate(R.layout.fragment_score, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Get the score from arguments
+        double score = getArguments() != null ? getArguments().getDouble("score", 0) : 0;
+
+        // Get the TextView for displaying the score
+        scoreTextView = view.findViewById(R.id.score_text);
+
+        // Animate the score
+        animateScore(score);
+    }
+
+    private void animateScore(final double finalScore) {
         // Duration for the animation (in milliseconds)
         int animationDuration = 2000; // 2 seconds
 
@@ -57,7 +76,7 @@ public class Score extends AppCompatActivity {
                     }
 
                     // Update the TextView with the current score (formatted to 2 decimal places)
-                    scoreTextView.setText(String.format("%.0f", 100*currentScore[0]));
+                    scoreTextView.setText(String.format("%.0f", 100 * currentScore[0]));
 
                     // Repeat this update after the defined interval
                     new Handler().postDelayed(this, updateInterval);
