@@ -11,7 +11,7 @@ import com.google.gson.JsonParser;
 
 public class ChatGPTClient {
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
-    private static final String API_KEY = "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";
+    private static final String API_KEY = "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";
 
     public static void sendMessage(String userMessage, Callback callback) {
         OkHttpClient client = new OkHttpClient();
