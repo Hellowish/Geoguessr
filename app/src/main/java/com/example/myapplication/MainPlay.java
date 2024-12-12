@@ -31,6 +31,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
 import com.google.android.gms.maps.model.StreetViewPanoramaOrientation;
 
+import okhttp3.Callback;
+import okhttp3.Call;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.io.IOException;
+
 import org.json.JSONObject;
 
 public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, OnStreetViewPanoramaReadyCallback {
@@ -39,6 +46,8 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
     private static LatLng streetViewCoordinate;
 
     public static double maxDistance;
+    public static String city;
+    public static String town;
 
     private Marker currentMarker;
     private GoogleMap mapIns;
@@ -67,6 +76,10 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
         // Retrieve qlatLng from Intent
         streetViewCoordinate = getIntent().getParcelableExtra("qlatLng");
+        maxDistance = getIntent().getDoubleExtra("maxDistance", 200);
+        city = getIntent().getStringExtra("city");
+        town = getIntent().getStringExtra("town");
+
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
         if (mapFragment != null)
@@ -178,38 +191,6 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
     String quetionResult = null;
     private void showHintPopup() {
-        // 输入问题
-        String question = "What is the capital of France?";
-/*
-        // 调用 ChatGPT 接口
-        ChatGPTClient.sendMessage(question, new Callback() {
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String responseBody = response.body().string();
-
-                    // 解析返回结果
-                    JsonObject jsonResponse = JsonParser.parseString(responseBody).getAsJsonObject();
-
-                    // 保存为 String
-                    quetionResult = jsonResponse
-                            .getAsJsonArray("choices")
-                            .get(0).getAsJsonObject()
-                            .get("message").getAsJsonObject()
-                            .get("content").getAsString();
-                } else {
-                    quetionResult = "请求失败，错误信息：" + response.message();
-                    System.err.println("请求失败，错误信息：" + response.message());
-                    System.err.println("请求失败，状态碼：" + response.code());
-                    System.err.println("错误内容：" + response.body().string());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                quetionResult = "请求失败：" + e.getMessage();
-            }
-        });*/
         new AlertDialog.Builder(this)
                 .setTitle("Are you sure?")
                 .setMessage("Warning, will deduct points.")
@@ -219,11 +200,60 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
     }
 
     private void showHintDetailsPopup() {
-        new AlertDialog.Builder(this)
+        // 输入问题
+        String question = "請根據" + city + town +
+                "，提供其文化、地理或歷史相關的線索，但不要直接說出縣市或行政區的名稱，讓人通過線索猜出是什麼地方，不要太多字。";
+
+        // 调用 ChatGPT 接口
+        ChatGPTClient.sendMessage(question, new Callback() {
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+
+                    // 解析返回结果
+                    JsonObject jsonResponse = JsonParser.parseString(responseBody).getAsJsonObject();
+                    // 获取消息内容
+                    String message = jsonResponse
+                            .getAsJsonArray("choices")
+                            .get(0).getAsJsonObject()
+                            .get("message").getAsJsonObject()
+                            .get("content").getAsString();
+
+                    // 确保在主线程中更新 UI
+                    runOnUiThread(() -> {
+                        // 确保提示内容不为空
+                        if (message != null && !message.isEmpty()) {
+                            showHint(message);
+                        } else {
+                            showError("No hint available.");
+                        }
+                    });
+                } else {
+                    // 失败时处理
+                    String errorMessage = "Request failed with status: " + response.code();
+                    runOnUiThread(() -> showError(errorMessage));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                String errorMessage = "Request failed: " + e.getMessage();
+                runOnUiThread(() -> showError(errorMessage));
+            }
+        });
+    }
+
+    private void showHint(String message) {
+        new AlertDialog.Builder(MainPlay.this)
                 .setTitle("Hint")
-                .setMessage(quetionResult)
+                .setMessage(message)
                 .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                 .show();
+    }
+
+    private void showError(String errorMessage) {
+        Toast.makeText(MainPlay.this, errorMessage, Toast.LENGTH_LONG).show();
     }
 
     // 計算兩個經緯度點之間的距離（單位：公里）
