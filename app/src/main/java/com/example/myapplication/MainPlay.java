@@ -26,27 +26,35 @@ import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.SupportStreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
 import com.google.android.gms.maps.model.StreetViewPanoramaOrientation;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import org.json.JSONObject;
-
-import java.io.IOException;
 
 import okhttp3.Callback;
 import okhttp3.Call;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.io.IOException;
+
+import org.json.JSONObject;
 
 public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, OnStreetViewPanoramaReadyCallback {
 
-    private LatLng mapCoordinate;
-    private LatLng strretViewCoordinate;
+    private static LatLng answerCord;
+    private static LatLng streetViewCoordinate;
+
+    public static double maxDistance;
+    public static String city;
+    public static String town;
+
+    private Marker currentMarker;
     private GoogleMap mapIns;
-    private StreetViewPanorama streetViewIns;
+
+    private static StreetViewPanorama streetViewIns;
     private SupportMapFragment mapFragment;
-    private SupportStreetViewPanoramaFragment streetViewFragment;
+    private ChatGPTClient client;
 
     private TextView timerText;
     private CountDownTimer countDownTimer;
@@ -61,19 +69,26 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_play);
 
+        client = new ChatGPTClient(this);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        mapCoordinate = new LatLng(23.975667, 120.973861);
+        // Retrieve qlatLng from Intent
+        streetViewCoordinate = getIntent().getParcelableExtra("qlatLng");
+        maxDistance = getIntent().getDoubleExtra("maxDistance", 200);
+        city = getIntent().getStringExtra("city");
+        town = getIntent().getStringExtra("town");
+
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
         if (mapFragment != null)
             mapFragment.getMapAsync(this);
 
-        streetViewFragment = (SupportStreetViewPanoramaFragment) getSupportFragmentManager().findFragmentById(R.id.streetview_fragment);
+        SupportStreetViewPanoramaFragment streetViewFragment = (SupportStreetViewPanoramaFragment) getSupportFragmentManager().findFragmentById(R.id.streetview_fragment);
         if (streetViewFragment != null)
             streetViewFragment.getStreetViewPanoramaAsync(this);
 
@@ -90,6 +105,8 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         // Set up the hint button
         findViewById(R.id.hint).setOnClickListener(view -> showHintPopup());
         getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();
+        // Set up the answer button
+        findViewById(R.id.Answer).setOnClickListener(v -> navigateToScoreActivity());
     }
 
     private void toggleFragmentVisibility() {
@@ -136,12 +153,34 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         startActivity(intent);
         finish(); // Optional: Close the current activity
     }
-
+    private void navigateToScoreActivity() {
+        double score = calculateScore(); // Calculate the score
+        Intent intent = new Intent(MainPlay.this, Score.class);
+        intent.putExtra("score", score); // Pass score to ScoreActivity
+        startActivity(intent);
+        finish(); // Optional: Close the current activity
+    }
     @Override
     public void onMapReady(@NonNull GoogleMap map) {
         mapIns = map;
-        mapIns.addMarker(new MarkerOptions().position(mapCoordinate).title("Location"));
-        mapIns.moveCamera(CameraUpdateFactory.newLatLngZoom(mapCoordinate, 8f));
+        mapIns.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mapIns.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(23.975667, 120.973861), 8f));
+        mapIns.getUiSettings().setRotateGesturesEnabled(false);
+
+        mapIns.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(@NonNull LatLng latLng) {
+                if (currentMarker != null) {
+                    currentMarker.remove();
+                }
+                answerCord = latLng;
+                // 在點擊位置新增 Marker
+                currentMarker = mapIns.addMarker(new MarkerOptions()
+                        .position(latLng) // Marker 的位置
+                        .title("位置") // Marker 的標題
+                        .snippet("經緯度: " + latLng.latitude + ", " + latLng.longitude)); // 顯示詳細信息
+            }
+        });
     }
 
     @Override
@@ -158,83 +197,11 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
                         .build(), 2000
         );
 
-        RequestQuetion("taipei", "中正區");
-    }
-
-    public void setStreetViewPosition(LatLng latLng) {
-        streetViewIns.setPosition(latLng);
-    }
-
-    public void RequestQuetion(String city, String town) {
-        ApiHelper.fetchCoordinates(this, city, town,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            // Parse latitude and longitude from the response
-                            double latitude = response.getDouble("latitude");
-                            double longitude = response.getDouble("longitude");
-
-                            latitude = Math.round(latitude * 1000.0) / 1000.0;
-                            longitude = Math.round(longitude * 1000.0) / 1000.0;
-
-                            // Create LatLng object
-                            strretViewCoordinate = new LatLng(latitude, longitude);
-                            setStreetViewPosition(strretViewCoordinate);
-                        } catch (Exception e) {
-                            Toast.makeText(MainPlay.this,
-                                    "Parsing error: " + e.getMessage(),
-                                    Toast.LENGTH_LONG).show();
-                            Log.d("DEBUG", "Parsing error: " + e.getMessage());
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainPlay.this,
-                                "Error: " + error.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                        Log.d("DEBUG", "Error: " + error.getMessage());
-                    }
-                }
-        );
+        streetViewIns.setPosition(streetViewCoordinate);
     }
 
     String quetionResult = null;
     private void showHintPopup() {
-        // 输入问题
-        String question = "What is the capital of France?";
-/*
-        // 调用 ChatGPT 接口
-        ChatGPTClient.sendMessage(question, new Callback() {
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String responseBody = response.body().string();
-
-                    // 解析返回结果
-                    JsonObject jsonResponse = JsonParser.parseString(responseBody).getAsJsonObject();
-
-                    // 保存为 String
-                    quetionResult = jsonResponse
-                            .getAsJsonArray("choices")
-                            .get(0).getAsJsonObject()
-                            .get("message").getAsJsonObject()
-                            .get("content").getAsString();
-                } else {
-                    quetionResult = "请求失败，错误信息：" + response.message();
-                    System.err.println("请求失败，错误信息：" + response.message());
-                    System.err.println("请求失败，状态碼：" + response.code());
-                    System.err.println("错误内容：" + response.body().string());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                quetionResult = "请求失败：" + e.getMessage();
-            }
-        });*/
         new AlertDialog.Builder(this)
                 .setTitle("Are you sure?")
                 .setMessage("Warning, will deduct points.")
@@ -244,10 +211,87 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
     }
 
     private void showHintDetailsPopup() {
-        new AlertDialog.Builder(this)
+        // 输入问题
+        String question = "請根據" + city + town +
+                "，提供其文化、地理或歷史相關的線索，但不要直接說出縣市或行政區的名稱，讓人通過線索猜出是什麼地方，不要太多字。";
+
+        // 调用 ChatGPT 接口
+        client.sendMessage(question, new Callback() {
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+
+                    // 解析返回结果
+                    JsonObject jsonResponse = JsonParser.parseString(responseBody).getAsJsonObject();
+                    // 获取消息内容
+                    String message = jsonResponse
+                            .getAsJsonArray("choices")
+                            .get(0).getAsJsonObject()
+                            .get("message").getAsJsonObject()
+                            .get("content").getAsString();
+
+                    // 确保在主线程中更新 UI
+                    runOnUiThread(() -> {
+                        // 确保提示内容不为空
+                        if (message != null && !message.isEmpty()) {
+                            showHint(message);
+                        } else {
+                            showError("No hint available.");
+                        }
+                    });
+                } else {
+                    // 失败时处理
+                    String errorMessage = "Request failed with status: " + response.code();
+                    runOnUiThread(() -> showError(errorMessage));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                String errorMessage = "Request failed: " + e.getMessage();
+                runOnUiThread(() -> showError(errorMessage));
+            }
+        });
+    }
+
+    private void showHint(String message) {
+        new AlertDialog.Builder(MainPlay.this)
                 .setTitle("Hint")
-                .setMessage(quetionResult)
+                .setMessage(message)
                 .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                 .show();
+    }
+
+    private void showError(String errorMessage) {
+        Toast.makeText(MainPlay.this, errorMessage, Toast.LENGTH_LONG).show();
+    }
+
+    // 計算兩個經緯度點之間的距離（單位：公里）
+    public static double haversine(double lat1, double lon1, double lat2, double lon2) {
+        // 轉換為弧度
+        lat1 = Math.toRadians(lat1);
+        lon1 = Math.toRadians(lon1);
+        lat2 = Math.toRadians(lat2);
+        lon2 = Math.toRadians(lon2);
+
+        // 哈弗辛公式
+        double dLat = lat2 - lat1;
+        double dLon = lon2 - lon1;
+        double a = Math.pow(Math.sin(dLat / 2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dLon / 2), 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        // 地球半徑（公里）
+        double R = 6371.0;
+        double distance = R * c;
+        return distance;
+    }
+
+    public static double calculateScore() {
+        // 計算距離
+        double distance = haversine(streetViewCoordinate.latitude, streetViewCoordinate.longitude,
+                answerCord.latitude, answerCord.longitude);
+        // 計算分數
+        return Math.max(0, 100 - (distance / maxDistance) * 100);
     }
 }

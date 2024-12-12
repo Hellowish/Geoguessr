@@ -6,14 +6,19 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 public class ApiHelper {
 
     private static final String BASE_URL = "http://140.136.151.146/geo/coordinate.php";
 
-    public static void fetchCoordinates(Context context, String town, String city,
+    public static void fetchCoordinates(Context context, String city, String town,
                                         Response.Listener<JSONObject> listener,
                                         Response.ErrorListener errorListener) {
         // 組合請求 URL
+        if(Objects.equals(city, "taiwan"))
+            town = "";
+
         String url = BASE_URL + "?city=" + city + "&town=" + town;
 
         // 建立 JSON 請求
