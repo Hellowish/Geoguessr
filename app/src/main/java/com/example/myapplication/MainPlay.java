@@ -89,6 +89,8 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         // Set up the hint button
         findViewById(R.id.hint).setOnClickListener(view -> showHintPopup());
         getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();
+        // Set up the answer button
+        findViewById(R.id.Answer).setOnClickListener(v -> navigateToScoreActivity());
     }
 
     private void toggleFragmentVisibility() {
@@ -135,7 +137,13 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         startActivity(intent);
         finish(); // Optional: Close the current activity
     }
-
+    private void navigateToScoreActivity() {
+        double score = calculateScore(); // Calculate the score
+        Intent intent = new Intent(MainPlay.this, Score.class);
+        intent.putExtra("score", score); // Pass score to ScoreActivity
+        startActivity(intent);
+        finish(); // Optional: Close the current activity
+    }
     @Override
     public void onMapReady(@NonNull GoogleMap map) {
         mapIns = map;
@@ -249,7 +257,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
     public static double calculateScore() {
         // 計算距離
         double distance = haversine(streetViewCoordinate.latitude, streetViewCoordinate.longitude,
-                                    answerCord.latitude, answerCord.longitude);
+                answerCord.latitude, answerCord.longitude);
         // 計算分數
         return Math.max(0, 100 - (distance / maxDistance) * 100);
     }
