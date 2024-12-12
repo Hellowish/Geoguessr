@@ -39,7 +39,6 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
     private static LatLng streetViewCoordinate;
 
     public static double maxDistance;
-    private static double score;
 
     private Marker currentMarker;
     private GoogleMap mapIns;
@@ -247,11 +246,11 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         return distance;
     }
 
-    public static void calculateScore() {
+    public static double calculateScore() {
         // 計算距離
         double distance = haversine(streetViewCoordinate.latitude, streetViewCoordinate.longitude,
                                     answerCord.latitude, answerCord.longitude);
         // 計算分數
-        score = Math.max(0, 100 - (distance / maxDistance) * 100);
+        return Math.max(0, 100 - (distance / maxDistance) * 100);
     }
 }
