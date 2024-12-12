@@ -26,27 +26,26 @@ import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.SupportStreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
 import com.google.android.gms.maps.model.StreetViewPanoramaOrientation;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
-
-import okhttp3.Callback;
-import okhttp3.Call;
-
 public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, OnStreetViewPanoramaReadyCallback {
 
-    private LatLng mapCoordinate;
-    private LatLng strretViewCoordinate;
+    private static LatLng answerCord;
+    private static LatLng streetViewCoordinate;
+
+    public static double maxDistance;
+    private static double score;
+
+    private Marker currentMarker;
     private GoogleMap mapIns;
-    private StreetViewPanorama streetViewIns;
+
+    private static StreetViewPanorama streetViewIns;
     private SupportMapFragment mapFragment;
-    private SupportStreetViewPanoramaFragment streetViewFragment;
 
     private TextView timerText;
     private CountDownTimer countDownTimer;
@@ -67,13 +66,14 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
             return insets;
         });
 
-        mapCoordinate = new LatLng(23.975667, 120.973861);
+        // Retrieve qlatLng from Intent
+        streetViewCoordinate = getIntent().getParcelableExtra("qlatLng");
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
         if (mapFragment != null)
             mapFragment.getMapAsync(this);
 
-        streetViewFragment = (SupportStreetViewPanoramaFragment) getSupportFragmentManager().findFragmentById(R.id.streetview_fragment);
+        SupportStreetViewPanoramaFragment streetViewFragment = (SupportStreetViewPanoramaFragment) getSupportFragmentManager().findFragmentById(R.id.streetview_fragment);
         if (streetViewFragment != null)
             streetViewFragment.getStreetViewPanoramaAsync(this);
 
@@ -140,8 +140,24 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
     @Override
     public void onMapReady(@NonNull GoogleMap map) {
         mapIns = map;
-        mapIns.addMarker(new MarkerOptions().position(mapCoordinate).title("Location"));
-        mapIns.moveCamera(CameraUpdateFactory.newLatLngZoom(mapCoordinate, 8f));
+        mapIns.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mapIns.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(23.975667, 120.973861), 8f));
+        mapIns.getUiSettings().setRotateGesturesEnabled(false);
+
+        mapIns.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(@NonNull LatLng latLng) {
+                if (currentMarker != null) {
+                    currentMarker.remove();
+                }
+                answerCord = latLng;
+                // 在點擊位置新增 Marker
+                currentMarker = mapIns.addMarker(new MarkerOptions()
+                        .position(latLng) // Marker 的位置
+                        .title("位置") // Marker 的標題
+                        .snippet("經緯度: " + latLng.latitude + ", " + latLng.longitude)); // 顯示詳細信息
+            }
+        });
     }
 
     @Override
@@ -158,47 +174,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
                         .build(), 2000
         );
 
-        RequestQuetion("taipei", "中正區");
-    }
-
-    public void setStreetViewPosition(LatLng latLng) {
-        streetViewIns.setPosition(latLng);
-    }
-
-    public void RequestQuetion(String city, String town) {
-        ApiHelper.fetchCoordinates(this, city, town,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            // Parse latitude and longitude from the response
-                            double latitude = response.getDouble("latitude");
-                            double longitude = response.getDouble("longitude");
-
-                            latitude = Math.round(latitude * 1000.0) / 1000.0;
-                            longitude = Math.round(longitude * 1000.0) / 1000.0;
-
-                            // Create LatLng object
-                            strretViewCoordinate = new LatLng(latitude, longitude);
-                            setStreetViewPosition(strretViewCoordinate);
-                        } catch (Exception e) {
-                            Toast.makeText(MainPlay.this,
-                                    "Parsing error: " + e.getMessage(),
-                                    Toast.LENGTH_LONG).show();
-                            Log.d("DEBUG", "Parsing error: " + e.getMessage());
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainPlay.this,
-                                "Error: " + error.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                        Log.d("DEBUG", "Error: " + error.getMessage());
-                    }
-                }
-        );
+        streetViewIns.setPosition(streetViewCoordinate);
     }
 
     String quetionResult = null;
@@ -249,5 +225,33 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
                 .setMessage(quetionResult)
                 .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                 .show();
+    }
+
+    // 計算兩個經緯度點之間的距離（單位：公里）
+    public static double haversine(double lat1, double lon1, double lat2, double lon2) {
+        // 轉換為弧度
+        lat1 = Math.toRadians(lat1);
+        lon1 = Math.toRadians(lon1);
+        lat2 = Math.toRadians(lat2);
+        lon2 = Math.toRadians(lon2);
+
+        // 哈弗辛公式
+        double dLat = lat2 - lat1;
+        double dLon = lon2 - lon1;
+        double a = Math.pow(Math.sin(dLat / 2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dLon / 2), 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        // 地球半徑（公里）
+        double R = 6371.0;
+        double distance = R * c;
+        return distance;
+    }
+
+    public static void calculateScore() {
+        // 計算距離
+        double distance = haversine(streetViewCoordinate.latitude, streetViewCoordinate.longitude,
+                                    answerCord.latitude, answerCord.longitude);
+        // 計算分數
+        score = Math.max(0, 100 - (distance / maxDistance) * 100);
     }
 }
