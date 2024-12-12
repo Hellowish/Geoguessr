@@ -4,44 +4,66 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.animation.ObjectAnimator;
-import android.util.Log;  // 导入 Log 类，用于调试
+import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.widget.ImageButton;
 import android.view.View;
+import android.widget.TextView;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Ranking extends AppCompatActivity {
 
-    private MediaPlayer clickSound; // 用于播放点击音效
+    private MediaPlayer clickSound; // 用於播放點擊音效
+    private RecyclerView recyclerView; // 用來顯示遊戲歷史紀錄的 RecyclerView
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ranking);
 
-        // 初始化点击音效
-        clickSound = MediaPlayer.create(this, R.raw.click); // 确保将点击声音文件放在 res/raw
+        // 初始化點擊音效
+        clickSound = MediaPlayer.create(this, R.raw.click); // 確保將點擊音效檔案放在 res/raw
         if (clickSound == null) {
-            Log.e("Ranking", "Failed to initialize click sound"); // 如果音效初始化失败，输出错误日志
+            Log.e("Ranking", "Failed to initialize click sound"); // 如果音效初始化失敗，輸出錯誤日誌
         }
 
         // 初始化 return_button
         ImageButton returnButton = findViewById(R.id.return_button);
         returnButton.setOnClickListener(v -> {
-            // 播放点击音效
+            // 播放點擊音效
             playClickSound();
 
-            // 启动 MainPlay Activity
+            // 啟動 MainPlay Activity
             Intent intent = new Intent(Ranking.this, Home.class);
             startActivity(intent);
 
-            // 应用按钮的缩放动画效果
+            // 應用按鈕的縮放動畫效果
             animateButtonClick(v);
         });
 
-        // 设置 WindowInsets Listener 以处理边缘间距
+        // 初始化 RecyclerView
+        recyclerView = findViewById(R.id.game_history_recycler_view);
+
+        // 設置 RecyclerView 的 LayoutManager
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        // 設置初始資料
+        List<GameHistory> gameHistoryList = getInitialGameHistory();
+        GameHistoryAdapter adapter = new GameHistoryAdapter(gameHistoryList);
+        recyclerView.setAdapter(adapter);
+
+        // 設置 WindowInsets Listener 以處理邊緣間距
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -49,31 +71,31 @@ public class Ranking extends AppCompatActivity {
         });
     }
 
-    // 播放点击声音
+    // 播放點擊聲音
     private void playClickSound() {
         if (clickSound != null) {
-            //Log.d("Ranking", "Playing click sound");
-            clickSound.start(); // 播放声音
-        //} else {
-            //Log.e("Ranking", "clickSound is null");  // 如果 MediaPlayer 没有正确初始化，输出错误日志
+            Log.d("Ranking", "Playing click sound");
+            clickSound.start(); // 播放音效
+        } else {
+            Log.e("Ranking", "clickSound is null");  // 如果 MediaPlayer 沒有正確初始化，輸出錯誤日誌
         }
     }
 
-    // 按钮动画效果
+    // 按鈕動畫效果
     private void animateButtonClick(View view) {
-        // 放大按钮（X 和 Y 轴）
-        ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(view, "scaleX", 1f, 1.1f); // X 轴缩放
-        ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(view, "scaleY", 1f, 1.1f); // Y 轴缩放
-        scaleUpX.setDuration(100); // 放大时的持续时间
-        scaleUpY.setDuration(100); // 放大时的持续时间
+        // 放大按鈕（X 和 Y 軸）
+        ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(view, "scaleX", 1f, 1.1f); // X 軸縮放
+        ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(view, "scaleY", 1f, 1.1f); // Y 軸縮放
+        scaleUpX.setDuration(100); // 放大時的持續時間
+        scaleUpY.setDuration(100); // 放大時的持續時間
         scaleUpX.start();
         scaleUpY.start();
 
-        // 放大后再恢复到原始大小
-        ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(view, "scaleX", 1.1f, 1f); // X 轴恢复
-        ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(view, "scaleY", 1.1f, 1f); // Y 轴恢复
-        scaleDownX.setDuration(100); // 恢复时的持续时间
-        scaleDownY.setDuration(100); // 恢复时的持续时间
+        // 放大後再恢復到原始大小
+        ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(view, "scaleX", 1.1f, 1f); // X 軸恢復
+        ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(view, "scaleY", 1.1f, 1f); // Y 軸恢復
+        scaleDownX.setDuration(100); // 恢復時的持續時間
+        scaleDownY.setDuration(100); // 恢復時的持續時間
         scaleDownX.start();
         scaleDownY.start();
     }
@@ -81,10 +103,109 @@ public class Ranking extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // 释放资源
+        // 釋放資源
         if (clickSound != null) {
             clickSound.release();
-            //Log.d("Ranking", "clickSound released");
+            Log.d("Ranking", "clickSound released");
+        }
+    }
+
+    // 返回 11 筆初始資料
+    private List<GameHistory> getInitialGameHistory() {
+        List<GameHistory> gameHistoryList = new ArrayList<>();
+
+        // 添加 11 筆遊戲歷史紀錄
+        for (int i = 1; i <= 20; i++) {
+            gameHistoryList.add(new GameHistory(
+                    "ID" + i,  // ID
+                    "2024-12-13 12:34",  // 時間
+                    String.valueOf(1000 + i),  // 分數
+                    "City" + i,  // 城市
+                    "Area" + i   // 區域
+            ));
+        }
+
+        return gameHistoryList;
+    }
+
+    // GameHistory 內部類別
+    public class GameHistory {
+        private String id;
+        private String time;
+        private String score;
+        private String city;
+        private String area;
+
+        public GameHistory(String id, String time, String score, String city, String area) {
+            this.id = id;
+            this.time = time;
+            this.score = score;
+            this.city = city;
+            this.area = area;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getTime() {
+            return time;
+        }
+
+        public String getScore() {
+            return score;
+        }
+
+        public String getCity() {
+            return city;
+        }
+
+        public String getArea() {
+            return area;
+        }
+    }
+
+    // GameHistoryAdapter 內部類別
+    public class GameHistoryAdapter extends RecyclerView.Adapter<GameHistoryAdapter.ViewHolder> {
+
+        private List<GameHistory> gameHistoryList;
+
+        public GameHistoryAdapter(List<GameHistory> gameHistoryList) {
+            this.gameHistoryList = gameHistoryList;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_game_history, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            GameHistory gameHistory = gameHistoryList.get(position);
+            holder.idTextView.setText(gameHistory.getId());
+            holder.timeTextView.setText(gameHistory.getTime());
+            holder.scoreTextView.setText(gameHistory.getScore());
+            holder.cityTextView.setText(gameHistory.getCity());
+            holder.areaTextView.setText(gameHistory.getArea());
+        }
+
+        @Override
+        public int getItemCount() {
+            return gameHistoryList.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            TextView idTextView, timeTextView, scoreTextView, cityTextView, areaTextView;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                idTextView = itemView.findViewById(R.id.id_text);
+                timeTextView = itemView.findViewById(R.id.time_text);
+                scoreTextView = itemView.findViewById(R.id.score_text);
+                cityTextView = itemView.findViewById(R.id.city_text);
+                areaTextView = itemView.findViewById(R.id.area_text);
+            }
         }
     }
 }

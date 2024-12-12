@@ -25,7 +25,7 @@ import java.util.Objects;
 
 public class Home extends AppCompatActivity {
 
-    public static MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayer;
     private MediaPlayer clickSound; // 用于播放点击音效
 
     private String city = "taiwan";
@@ -328,9 +328,9 @@ public class Home extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         // Stop the background music when the activity is no longer in the foreground
-        //if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-        //mediaPlayer.pause(); // Pause music
-        //}
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause(); // Pause music
+        }
     }
 
     @Override
@@ -349,7 +349,7 @@ public class Home extends AppCompatActivity {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
-            mediaPlayer = null; // Make sure it's null to avoid memory leaks
+            //mediaPlayer = null; // Make sure it's null to avoid memory leaks
         }
 
         // Release the click sound MediaPlayer
