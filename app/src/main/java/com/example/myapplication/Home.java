@@ -1,9 +1,11 @@
 package com.example.myapplication;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -13,75 +15,100 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class Home extends AppCompatActivity {
 
-    private MediaPlayer mediaPlayer;
+    public static MediaPlayer mediaPlayer;
+    private MediaPlayer clickSound; // 用于播放点击音效
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_home); // Load the game_home layout
 
-        // Initialize MediaPlayer with the music file in the raw folder
-        mediaPlayer = MediaPlayer.create(this, R.raw.home); // Make sure to put your music file in res/raw
-        mediaPlayer.setLooping(true); // Loop the music indefinitely
-        mediaPlayer.start(); // Start playing the music
+        // Initialize background music
+        if (mediaPlayer == null) { // Initialize only if it's not already initialized
+            mediaPlayer = MediaPlayer.create(this, R.raw.home); // Background music file
+            mediaPlayer.setLooping(true); // Loop music indefinitely
+            mediaPlayer.start(); // Start the music
+        }
 
-        // Initialize ImageButton5 (Play button)
-        ImageButton playButton = findViewById(R.id.imageButton5);
+
+        // Initialize click sound
+        clickSound = MediaPlayer.create(this, R.raw.click); // Make sure to put your click sound file in res/raw
+
+        // Initialize Play button
+        ImageButton playButton = findViewById(R.id.play_button);
         playButton.setOnClickListener(v -> {
+            // Play click sound
+            playClickSound();
+
             // Start MainPlay Activity
             Intent intent = new Intent(Home.this, MainPlay.class);
             startActivity(intent);
+
+            // Apply button scale animation
+            animateButtonClick(v);
         });
 
-        // Initialize ImageButton2 (Ranking button)
-        ImageButton rankingButton = findViewById(R.id.imageButton2);
-        rankingButton.setOnClickListener(v -> {
+        // Initialize record button
+        ImageButton recordButton = findViewById(R.id.record_button);
+        recordButton.setOnClickListener(v -> {
+            // Play click sound
+            playClickSound();
+
             // Start Ranking Activity
             Intent intent = new Intent(Home.this, Ranking.class);
             startActivity(intent);
+
+            // Apply button scale animation
+            animateButtonClick(v);
         });
 
-        // Initialize ImageButton2 (User page button)
-        ImageButton userPageButton = findViewById(R.id.imageButton);
+        // Initialize profile_button
+        ImageButton userPageButton = findViewById(R.id.profile_button);
         userPageButton.setOnClickListener(v -> {
+            // Play click sound
+            playClickSound();
+
             // Start User Activity
             Intent intent = new Intent(Home.this, User.class);
             startActivity(intent);
+
+            // Apply button scale animation
+            animateButtonClick(v);
         });
 
+        // Spinner setup for cities and towns (same as before)
         Spinner spinnerCity = findViewById(R.id.spinner_city);
         Spinner spinnerTown = findViewById(R.id.spinner_town);
 
-// 建立縣市的 Adapter
         ArrayAdapter<CharSequence> cityAdapter = ArrayAdapter.createFromResource(this,
                 R.array.cities, android.R.layout.simple_spinner_item);
         cityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCity.setAdapter(cityAdapter);
 
-        spinnerCity.setSelection(22); //預設全台灣
+        spinnerCity.setSelection(22); // Default to Taiwan
 
-// 縣市選擇監聽器
+        // City selection listener (same as before)
         spinnerCity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View view, int position, long id) {
                 int townArrayId;
                 switch (position) {
-                    case 0: // 台北市
+                    case 0: // Taipei City
                         townArrayId = R.array.towns_taipei;
                         break;
-                    case 1: // 新北市
+                    case 1: // New Taipei City
                         townArrayId = R.array.towns_newtaipei;
                         break;
-                    case 2: // 桃園市
+                    case 2: // Taoyuan City
                         townArrayId = R.array.towns_taoyuan;
                         break;
-                    case 3: // 台中市
+                    case 3: // Taichung City
                         townArrayId = R.array.towns_taichung;
                         break;
-                    case 4: // 台南市
+                    case 4: // Tainan City
                         townArrayId = R.array.towns_tainan;
                         break;
-                    case 5: // 高雄市
+                    case 5: // Kaohsiung City
                         townArrayId = R.array.towns_kaohsiung;
                         break;
                     case 6: // 基隆市
@@ -136,11 +163,10 @@ public class Home extends AppCompatActivity {
                         townArrayId = R.array.taiwan;
                         break;
                     default:
-                        townArrayId = R.array.taiwan; // 預設台灣
+                        townArrayId = R.array.taiwan; // Default to Taiwan
                         break;
                 }
 
-                // 更新鄉鎮的 Adapter
                 ArrayAdapter<CharSequence> townAdapter = ArrayAdapter.createFromResource(Home.this,
                         townArrayId, android.R.layout.simple_spinner_item);
                 townAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -149,27 +175,52 @@ public class Home extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-                // 預設處理
+                // Default behavior
             }
         });
+    }
 
+    // Play click sound
+    private void playClickSound() {
+        if (clickSound != null) {
+            clickSound.start(); // Play the sound
+        }
+    }
+
+    // Button scale animation
+    private void animateButtonClick(View view) {
+        // Scale the button (grow and shrink effect)
+        ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(view, "scaleX", 1f, 1.1f); // X-axis scale
+        ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(view, "scaleY", 1f, 1.1f); // Y-axis scale
+        scaleUpX.setDuration(100); // Scale-up duration
+        scaleUpY.setDuration(100); // Scale-up duration
+        scaleUpX.start();
+        scaleUpY.start();
+
+        // After scaling up, scale down to original size
+        ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(view, "scaleX", 1.1f, 1f); // X-axis scale back
+        ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(view, "scaleY", 1.1f, 1f); // Y-axis scale back
+        scaleDownX.setDuration(100); // Scale-down duration
+        scaleDownY.setDuration(100); // Scale-down duration
+        scaleDownX.start();
+        scaleDownY.start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // Stop the music when the activity is no longer in the foreground
-        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-            mediaPlayer.pause(); // Pause music
-        }
+        // Stop the background music when the activity is no longer in the foreground
+        //if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            //mediaPlayer.pause(); // Pause music
+        //}
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Resume the music if it was paused
+        // Resume the background music if it was paused
         if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
-            mediaPlayer.start(); // Start the music again when the activity resumes
+            mediaPlayer.start(); // Start the music again
         }
     }
 
@@ -180,6 +231,12 @@ public class Home extends AppCompatActivity {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
+            mediaPlayer = null; // Make sure it's null to avoid memory leaks
+        }
+
+        // Release the click sound MediaPlayer
+        if (clickSound != null) {
+            clickSound.release();
         }
     }
 }

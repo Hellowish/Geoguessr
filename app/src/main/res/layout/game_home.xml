@@ -7,94 +7,95 @@
     android:background="@drawable/color_gradual_layer">
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="233dp"
-        android:layout_height="83dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.033"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/_2024_11_17_221619" />
-
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="398dp"
-        android:layout_height="381dp"
-        android:layout_marginTop="40dp"
+        android:id="@+id/home_background"
+        android:layout_width="5157dp"
+        android:layout_height="904dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.461"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.109"
-        app:srcCompat="@drawable/taiwan_map" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.99"
+        app:srcCompat="@drawable/home_background" />
 
     <ImageButton
-        android:id="@+id/imageButton5"
-        android:layout_width="193dp"
-        android:layout_height="75dp"
+        android:id="@+id/play_button"
+        android:layout_width="319dp"
+        android:layout_height="122dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.488"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.827"
+        app:layout_constraintVertical_bias="0.942"
         app:srcCompat="@drawable/play_button"
         tools:ignore="MissingConstraints" />
 
     <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="59dp"
-        android:layout_height="50dp"
+        android:id="@+id/profile_button"
+        android:layout_width="203dp"
+        android:layout_height="211dp"
+        android:layout_marginEnd="68dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.928"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.041"
+        app:layout_constraintVertical_bias="0.084"
         app:srcCompat="@drawable/profile_button"
         tools:ignore="MissingConstraints" />
 
-    <ImageButton
-        android:id="@+id/imageButton2"
-        android:layout_width="180dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="36dp"
-        android:background="@android:color/transparent"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton5"
-        app:layout_constraintVertical_bias="0.333"
-        app:srcCompat="@drawable/ranking_button" />
-
-
     <Spinner
         android:id="@+id/spinner_city"
-        android:layout_width="179dp"
-        android:layout_height="37dp"
-        android:layout_marginStart="24dp"
-        android:background="#602ABF"
+        android:layout_width="161dp"
+        android:layout_height="71dp"
+        android:layout_marginStart="36dp"
+        android:background="#7BBDB6"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.149" />
+        app:layout_constraintVertical_bias="0.106" />
 
     <Spinner
         android:id="@+id/spinner_town"
-        android:layout_width="179dp"
-        android:layout_height="37dp"
-        android:background="#602abf"
+        android:layout_width="176dp"
+        android:layout_height="74dp"
+        android:background="#7BBDB6"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/spinner_city"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.149" />
+        app:layout_constraintVertical_bias="0.106" />
+
+    <ImageView
+        android:id="@+id/taiwan_map"
+        android:layout_width="533dp"
+        android:layout_height="530dp"
+        android:layout_marginEnd="360dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/taiwan_map"
+        tools:layout_editor_absoluteY="57dp" />
+
+    <ImageButton
+        android:id="@+id/record_button"
+        android:layout_width="221dp"
+        android:layout_height="212dp"
+        android:layout_marginTop="556dp"
+        android:layout_marginEnd="60dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/record_button" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="20dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
