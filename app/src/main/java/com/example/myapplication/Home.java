@@ -50,10 +50,15 @@ public class Home extends AppCompatActivity {
                     // Log.d("DEBUG", "qlatLng: " + qlatLng);
                     Intent intent = new Intent(Home.this, MainPlay.class);
                     intent.putExtra("qlatLng", qlatLng);  // Pass data via Intent
+
                     if(Objects.equals(city, "taiwan"))
-                        MainPlay.maxDistance = 200;
+                        intent.putExtra("maxDistance", 200);
                     else
-                        MainPlay.maxDistance = 20;
+                        intent.putExtra("maxDistance", 20);
+
+                    intent.putExtra("city", city);
+                    intent.putExtra("town", town);
+
                     startActivity(intent);
                 }
             });
