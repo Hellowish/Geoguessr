@@ -27,6 +27,9 @@ public class Home extends AppCompatActivity {
     private String city = "taiwan";
     private String town;
 
+    public String returnCity;
+    public String returnTown;
+
     private LatLng qlatLng;
 
     @Override
@@ -56,8 +59,8 @@ public class Home extends AppCompatActivity {
                     else
                         intent.putExtra("maxDistance", 20);
 
-                    intent.putExtra("city", city);
-                    intent.putExtra("town", town);
+                    intent.putExtra("city", returnCity);
+                    intent.putExtra("town", returnTown);
 
                     startActivity(intent);
                 }
@@ -232,14 +235,21 @@ public class Home extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            // Parse latitude and longitude from the response
+                            // 解析城市、城鎮、緯度和經度
+                            returnCity = response.getString("city");
+                            returnTown = response.getString("town");
                             double latitude = response.getDouble("latitude");
                             double longitude = response.getDouble("longitude");
 
+                            // 進行必要的處理，比如四捨五入
                             latitude = Math.round(latitude * 1000.0) / 1000.0;
                             longitude = Math.round(longitude * 1000.0) / 1000.0;
 
                             qlatLng = new LatLng(latitude, longitude);
+
+                            // 可以將城市和城鎮資訊傳遞給其他部分的代碼
+                            Log.d("City Info", "City: " + returnCity + ", Town: " + returnTown);
+
                             callback.onRequestQuestionCompleted();
                         } catch (Exception e) {
                             Toast.makeText(Home.this,
