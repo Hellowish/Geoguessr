@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +29,12 @@ public class Ranking extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ranking);
+
+        // 添加淡入效果
+        View view = findViewById(android.R.id.content);
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f);
+        fadeIn.setDuration(500);
+        fadeIn.start();
 
         // 初始化點擊音效
         clickSound = MediaPlayer.create(this, R.raw.click); // 確保將點擊音效檔案放在 res/raw
@@ -49,6 +54,8 @@ public class Ranking extends AppCompatActivity {
 
             // 應用按鈕的縮放動畫效果
             animateButtonClick(v);
+
+            overridePendingTransition(R.anim.record_out, R.anim.record_in);
         });
 
         // 初始化 RecyclerView

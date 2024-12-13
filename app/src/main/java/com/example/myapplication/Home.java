@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -81,6 +80,7 @@ public class Home extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
+            overridePendingTransition(R.anim.play_in, R.anim.play_out);
         });
 
         // Initialize record button
@@ -95,6 +95,8 @@ public class Home extends AppCompatActivity {
 
             // Apply button scale animation
             animateButtonClick(v);
+
+            overridePendingTransition(R.anim.record_in, R.anim.record_out);
         });
 
         // Initialize profile_button
