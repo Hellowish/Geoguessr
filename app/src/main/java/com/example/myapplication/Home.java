@@ -4,11 +4,13 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -35,11 +37,15 @@ public class Home extends AppCompatActivity {
 
     private LatLng qlatLng;
 
+    private ProgressBar progressBar; // Declare ProgressBar
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_home); // Load the game_home layout
+
+        // Initialize ProgressBar
+        progressBar = findViewById(R.id.progressBar);
 
         // Initialize background music
         if (mediaPlayer == null) { // Initialize only if it's not already initialized
@@ -48,12 +54,13 @@ public class Home extends AppCompatActivity {
             mediaPlayer.start(); // Start the music
         }
 
-
         // Initialize click sound
-        clickSound = MediaPlayer.create(this, R.raw.click); // Make sure to put your click sound file in res/raw
+        clickSound = MediaPlayer.create(this, R.raw.click); // Make sure to put your click sound file in res/r
 
-        // Initialize Play button
+        // 获取进度条和按钮
         ImageButton playButton = findViewById(R.id.play_button);
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+
         playButton.setOnClickListener(v -> {
             // Play click sound
             playClickSound();
@@ -61,15 +68,21 @@ public class Home extends AppCompatActivity {
             // Apply button scale animation
             animateButtonClick(v);
 
+            // Show ProgressBar (loading circle)
+            progressBar.setVisibility(View.VISIBLE);
+
+            // Simulate loading by calling RequestQuestion and then hiding the ProgressBar after some delay
             RequestQuestion(city, town, new RequestQuestionCallback() {
                 @Override
                 public void onRequestQuestionCompleted() {
+                    // Hide ProgressBar after request completes
+                    progressBar.setVisibility(View.GONE);
+
                     // 當 RequestQuestion 執行完成後再啟動 MainPlay Activity
-                    // Log.d("DEBUG", "qlatLng: " + qlatLng);
                     Intent intent = new Intent(Home.this, MainPlay.class);
                     intent.putExtra("qlatLng", qlatLng);  // Pass data via Intent
 
-                    if(Objects.equals(city, "taiwan"))
+                    if (Objects.equals(city, "taiwan"))
                         intent.putExtra("maxDistance", 200);
                     else
                         intent.putExtra("maxDistance", 20);
@@ -80,7 +93,6 @@ public class Home extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
-            overridePendingTransition(R.anim.play_in, R.anim.play_out);
         });
 
         // Initialize record button
@@ -305,7 +317,15 @@ public class Home extends AppCompatActivity {
                             // 可以將城市和城鎮資訊傳遞給其他部分的代碼
                             Log.d("City Info", "City: " + returnCity + ", Town: " + returnTown);
 
-                            callback.onRequestQuestionCompleted();
+                            // 延遲隱藏 ProgressBar，確保動畫完成後再隱藏
+                            progressBar.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressBar.setVisibility(View.GONE);
+                                    callback.onRequestQuestionCompleted(); // 呼叫完成的回調
+                                }
+                            }, 500); // 延遲500ms，根據需要調整延遲時間
+
                         } catch (Exception e) {
                             Toast.makeText(Home.this,
                                     "Parsing error: " + e.getMessage(),
@@ -321,6 +341,7 @@ public class Home extends AppCompatActivity {
                                 "Error: " + error.getMessage(),
                                 Toast.LENGTH_LONG).show();
                         Log.d("DEBUG", "Error: " + error.getMessage());
+                        progressBar.setVisibility(View.GONE); // 如果請求失敗也隱藏進度條
                     }
                 }
         );
@@ -351,7 +372,6 @@ public class Home extends AppCompatActivity {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
-            //mediaPlayer = null; // Make sure it's null to avoid memory leaks
         }
 
         // Release the click sound MediaPlayer
