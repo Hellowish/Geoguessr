@@ -115,8 +115,8 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
     private void showScoreFragment() {
         // Find buttons and timer and hide them
-        Button answerButton = findViewById(R.id.Answer);
-        Button hintButton = findViewById(R.id.hint);
+        ImageButton answerButton = findViewById(R.id.Answer);
+        ImageButton hintButton = findViewById(R.id.hint);
         ImageButton expandButton = findViewById(R.id.expand);
         TextView timerText = findViewById(R.id.timer_text);
 
@@ -132,8 +132,6 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         if (timerText != null) {
             timerText.setVisibility(View.GONE);
         }
-
-        Log.d("MainPlay", "Answer, Hint, Expand buttons, and Timer set to GONE");
 
         // Create a new instance of the ScoreFragment and pass necessary arguments
         ScoreFragment scoreFragment = ScoreFragment.newInstance(calculateScore());
@@ -163,13 +161,13 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
                         .beginTransaction()
                         .hide(mapFragment)
                         .commit();
-                expandButton.setImageResource(R.drawable._7); // Update icon
+                expandButton.setImageResource(R.drawable.map2); // Update icon
             } else {
                 getSupportFragmentManager()
                         .beginTransaction()
                         .show(mapFragment)
                         .commit();
-                expandButton.setImageResource(R.drawable._7); // Update icon
+                expandButton.setImageResource(R.drawable.map2); // Update icon
             }
             isMapFragmentVisible = !isMapFragmentVisible;
         }

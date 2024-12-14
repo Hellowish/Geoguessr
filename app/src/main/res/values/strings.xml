@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GeoGuesser</string>
+    <string name="app_name">TaiwanGeo</string>
 
     <string name="openai_api_key">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</string>
     <string name="map_api_key">AIzaSyCaWiPJQx-T7kGbUvOKhNIomNMC0Rz94a4</string>

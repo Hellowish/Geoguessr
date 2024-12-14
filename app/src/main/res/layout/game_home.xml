@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/color_gradual_layer">
+    android:background="@color/black">
 
     <ImageView
         android:id="@+id/home_background"
@@ -25,10 +25,10 @@
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.11"
+        app:layout_constraintHorizontal_bias="0.066"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.963"
+        app:layout_constraintVertical_bias="0.958"
         app:srcCompat="@drawable/play_button"
         tools:ignore="MissingConstraints" />
 
@@ -120,8 +120,8 @@
         android:id="@+id/record_button"
         android:layout_width="222dp"
         android:layout_height="239dp"
-        android:layout_marginTop="504dp"
-        android:layout_marginEnd="272dp"
+        android:layout_marginTop="440dp"
+        android:layout_marginEnd="296dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
