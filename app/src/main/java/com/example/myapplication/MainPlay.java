@@ -9,6 +9,7 @@ import android.os.CountDownTimer;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -119,6 +120,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         ImageButton hintButton = findViewById(R.id.hint);
         ImageButton expandButton = findViewById(R.id.expand);
         TextView timerText = findViewById(R.id.timer_text);
+        ImageView box= findViewById(R.id.box);
 
         if (answerButton != null) {
             answerButton.setVisibility(View.GONE);
@@ -131,6 +133,9 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         }
         if (timerText != null) {
             timerText.setVisibility(View.GONE);
+        }
+        if (box != null) {
+            box.setVisibility(View.GONE);
         }
 
         // Create a new instance of the ScoreFragment and pass necessary arguments
