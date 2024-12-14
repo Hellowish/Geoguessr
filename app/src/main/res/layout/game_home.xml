@@ -32,6 +32,7 @@
         app:srcCompat="@drawable/play_button"
         tools:ignore="MissingConstraints" />
 
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width ="100dp"

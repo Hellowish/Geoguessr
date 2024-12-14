@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -52,6 +54,19 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_home); // Load the game_home layout
 
+        // Apply pulse animation to play button
+        ImageButton playButton = findViewById(R.id.play_button);
+        Animation pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.button_animation);
+        playButton.startAnimation(pulseAnimation);
+
+        ImageButton rank = findViewById(R.id.profile_button);
+        Animation up = AnimationUtils.loadAnimation(this, R.anim.button_animation);
+        rank.startAnimation(up);
+
+        ImageButton score = findViewById(R.id.record_button);
+        Animation down = AnimationUtils.loadAnimation(this, R.anim.button_animation);
+        score.startAnimation(down);
+
         // Initialize ProgressBar
         progressBar = findViewById(R.id.progressBar);
         percentageText = findViewById(R.id.percentageText);
@@ -73,7 +88,7 @@ public class Home extends AppCompatActivity {
         clickSound = MediaPlayer.create(this, R.raw.click); // Make sure to put your click sound file in res/r
 
         // 获取进度条和按钮
-        ImageButton playButton = findViewById(R.id.play_button);
+
         ProgressBar progressBar = findViewById(R.id.progressBar);
 
         playButton.setOnClickListener(v -> {
