@@ -12,38 +12,37 @@
         android:layout_height="904dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.365"
         app:srcCompat="@drawable/home_background" />
 
     <ImageButton
         android:id="@+id/play_button"
-        android:layout_width="435dp"
-        android:layout_height="376dp"
+        android:layout_width="386dp"
+        android:layout_height="278dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.118"
+        app:layout_constraintHorizontal_bias="0.29"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.995"
+        app:layout_constraintVertical_bias="0.726"
         app:srcCompat="@drawable/play_button"
         tools:ignore="MissingConstraints" />
 
     <ImageButton
         android:id="@+id/profile_button"
-        android:layout_width="210dp"
-        android:layout_height="255dp"
-        android:layout_marginEnd="64dp"
+        android:layout_width="155dp"
+        android:layout_height="182dp"
+        android:layout_marginEnd="816dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.954"
+        app:layout_constraintVertical_bias="0.307"
         app:srcCompat="@drawable/profile_button"
         tools:ignore="MissingConstraints" />
 
@@ -54,28 +53,28 @@
         android:background="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.007"
+        app:layout_constraintHorizontal_bias="0.015"
         app:layout_constraintStart_toEndOf="@+id/spinner_city"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.514" />
+        app:layout_constraintVertical_bias="0.318" />
 
     <Spinner
         android:id="@+id/spinner_city"
         android:layout_width="161dp"
         android:layout_height="71dp"
-        android:layout_marginStart="432dp"
+        android:layout_marginStart="828dp"
         android:background="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.514" />
+        app:layout_constraintVertical_bias="0.318" />
 
     <ImageButton
         android:id="@+id/record_button"
-        android:layout_width="284dp"
-        android:layout_height="253dp"
-        android:layout_marginTop="476dp"
-        android:layout_marginEnd="248dp"
+        android:layout_width="161dp"
+        android:layout_height="166dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginEnd="644dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"

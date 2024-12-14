@@ -1,5 +1,5 @@
 package com.example.myapplication;
-
+import android.view.View;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.fragment.app.FragmentManager;
@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -113,8 +114,29 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
     }
 
     private void showScoreFragment() {
-        // You can create a new instance of the ScoreFragment and pass necessary arguments to it
-        ScoreFragment scoreFragment = ScoreFragment.newInstance(calculateScore()); // Example: passing a static score for now
+        // Find buttons and timer and hide them
+        Button answerButton = findViewById(R.id.Answer);
+        Button hintButton = findViewById(R.id.hint);
+        ImageButton expandButton = findViewById(R.id.expand);
+        TextView timerText = findViewById(R.id.timer_text);
+
+        if (answerButton != null) {
+            answerButton.setVisibility(View.GONE);
+        }
+        if (hintButton != null) {
+            hintButton.setVisibility(View.GONE);
+        }
+        if (expandButton != null) {
+            expandButton.setVisibility(View.GONE);
+        }
+        if (timerText != null) {
+            timerText.setVisibility(View.GONE);
+        }
+
+        Log.d("MainPlay", "Answer, Hint, Expand buttons, and Timer set to GONE");
+
+        // Create a new instance of the ScoreFragment and pass necessary arguments
+        ScoreFragment scoreFragment = ScoreFragment.newInstance(calculateScore());
 
         // Begin the fragment transaction
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -130,6 +152,10 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         transaction.addToBackStack(null); // Optional: Add to back stack
         transaction.commit();
     }
+
+
+
+
     private void toggleFragmentVisibility() {
         if (mapFragment != null) {
             if (isMapFragmentVisible) {
