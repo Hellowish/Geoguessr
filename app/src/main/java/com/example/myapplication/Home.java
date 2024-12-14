@@ -13,6 +13,11 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.widget.TextView;
+
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -38,6 +43,9 @@ public class Home extends AppCompatActivity {
     private LatLng qlatLng;
 
     private ProgressBar progressBar; // Declare ProgressBar
+    private TextView percentageText;
+    private Handler handler = new Handler();
+    private int progressStatus = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +54,13 @@ public class Home extends AppCompatActivity {
 
         // Initialize ProgressBar
         progressBar = findViewById(R.id.progressBar);
+        percentageText = findViewById(R.id.percentageText);
+
+        Drawable drawable = progressBar.getIndeterminateDrawable().mutate();
+        drawable.setColorFilter(Color.parseColor("#afeeee"), PorterDuff.Mode.SRC_IN); // 設置顏色
+
+        // Set the maximum value for the progress bar (if not set in XML)
+        progressBar.setMax(100);
 
         // Initialize background music
         if (mediaPlayer == null) { // Initialize only if it's not already initialized
@@ -70,29 +85,58 @@ public class Home extends AppCompatActivity {
 
             // Show ProgressBar (loading circle)
             progressBar.setVisibility(View.VISIBLE);
+            percentageText.setVisibility(View.VISIBLE);
 
-            // Simulate loading by calling RequestQuestion and then hiding the ProgressBar after some delay
-            RequestQuestion(city, town, new RequestQuestionCallback() {
+            // 確保進度條和百分比文字在其他視圖之上
+            progressBar.bringToFront();
+            percentageText.bringToFront();
+
+            // Start a thread to simulate loading and update the ProgressBar
+            new Thread(new Runnable() {
                 @Override
-                public void onRequestQuestionCompleted() {
-                    // Hide ProgressBar after request completes
-                    progressBar.setVisibility(View.GONE);
+                public void run() {
+                    while (progressStatus < 100) {
+                        progressStatus++;
 
-                    // 當 RequestQuestion 執行完成後再啟動 MainPlay Activity
-                    Intent intent = new Intent(Home.this, MainPlay.class);
-                    intent.putExtra("qlatLng", qlatLng);  // Pass data via Intent
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressBar.setProgress(progressStatus);
+                                percentageText.setText(progressStatus + "%");
+                            }
+                        });
 
-                    if (Objects.equals(city, "taiwan"))
-                        intent.putExtra("maxDistance", 200);
-                    else
-                        intent.putExtra("maxDistance", 20);
+                        try {
+                            Thread.sleep(50); // Simulate work being done
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
-                    intent.putExtra("city", returnCity);
-                    intent.putExtra("town", returnTown);
+                    // Once loading is complete, make request
+                    RequestQuestion(city, town, new RequestQuestionCallback() {
+                        @Override
+                        public void onRequestQuestionCompleted() {
+                            progressBar.setVisibility(View.GONE);
+                            percentageText.setVisibility(View.GONE);
 
-                    startActivity(intent);
+                            // Start MainPlay Activity after completion
+                            Intent intent = new Intent(Home.this, MainPlay.class);
+                            intent.putExtra("qlatLng", qlatLng);
+                            intent.putExtra("city", returnCity);
+                            intent.putExtra("town", returnTown);
+
+                            // Set max distance based on city
+                            if ("taiwan".equals(city))
+                                intent.putExtra("maxDistance", 200);
+                            else
+                                intent.putExtra("maxDistance", 20);
+
+                            startActivity(intent);
+                        }
+                    });
                 }
-            });
+            }).start();  // Start the loading thread
         });
 
         // Initialize record button
@@ -363,6 +407,12 @@ public class Home extends AppCompatActivity {
         if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
             mediaPlayer.start(); // Start the music again
         }
+        // Reset progress when returning to Home
+        progressStatus = 0;
+        progressBar.setProgress(0);
+        percentageText.setText("0%");
+        progressBar.setVisibility(View.GONE);
+        percentageText.setVisibility(View.GONE);
     }
 
     @Override
