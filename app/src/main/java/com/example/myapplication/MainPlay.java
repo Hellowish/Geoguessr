@@ -454,7 +454,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         double distance = haversine(streetViewCoordinate.latitude, streetViewCoordinate.longitude,
                 answerCord.latitude, answerCord.longitude);
         // 計算分數
-        sum += Math.max(0, 100 - (distance / maxDistance) * 100);
-        return (int)Math.max(0, 100 - (distance / maxDistance) * 100);
+        sum += Math.max(1, 100 - (distance / maxDistance) * 100);
+        return (int)Math.max(1, 100 - (distance / maxDistance) * 100);
     }
 }
