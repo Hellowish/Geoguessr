@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -24,22 +25,27 @@ public class FailureActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_failure);
+
         // Retrieve the passed sum value
         float sum = getIntent().getFloatExtra("sum", 0.0f);
 
-        // Display or use the sum value as needed
-        TextView sumTextView = findViewById(R.id.sumTextView); // Assume you have a TextView with this ID
-        sumTextView.setText(String.format("%.0f",sum));
+        // Find the TextView
+        TextView sumTextView = findViewById(R.id.sumTextView);
 
+        // Animate the TextView to count from zero to the sum
+        animateSumTextView(sumTextView, sum);
+
+        // Find the retry button and apply animation
         ImageButton playButton = findViewById(R.id.retry);
         Animation pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.button_animation);
         playButton.startAnimation(pulseAnimation);
 
         // Play background music
-        mediaPlayer = MediaPlayer.create(this, R.raw.failure_music); // Replace "failure_music" with your audio file name in res/raw
-        mediaPlayer.setLooping(true); // Loop the music
+        mediaPlayer = MediaPlayer.create(this, R.raw.failure_music);
+        mediaPlayer.setLooping(true);
         mediaPlayer.start();
 
+        // Adjust padding for system bars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -55,8 +61,27 @@ public class FailureActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Animate the TextView to count from 0 to the target value.
+     *
+     * @param textView The TextView to animate.
+     * @param targetValue The final value to count up to.
+     */
+    private void animateSumTextView(final TextView textView, float targetValue) {
+        ValueAnimator animator = ValueAnimator.ofFloat(0, targetValue);
+        animator.setDuration(5000); // Duration of the animation in milliseconds
+        animator.addUpdateListener(animation -> {
+            float animatedValue = (float) animation.getAnimatedValue();
+            textView.setText(String.format("%.0f", animatedValue)); // Update the TextView with the current value
+        });
+        animator.start();
+    }
+
+    /**
+     * Navigate back to the home screen.
+     */
     private void navigateToHome() {
-        Intent intent = new Intent(this, Home.class); // Replace `HomeActivity` with your home page activity class
+        Intent intent = new Intent(this, Home.class); // Replace `Home` with your home activity class
         startActivity(intent);
         finish(); // Close the current activity
     }
