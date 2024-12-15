@@ -151,6 +151,10 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         TextView timerText = findViewById(R.id.timer_text);
         ImageView box= findViewById(R.id.box);
 
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+
         if (answerButton != null) {
             answerButton.setVisibility(View.GONE);
         }
