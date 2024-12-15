@@ -6,13 +6,18 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.TextView;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+
+
 public class User extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +25,10 @@ public class User extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_user);
 
+        TextView time = findViewById(R.id.tp);
+        TextView scoreText = findViewById(R.id.hs);
+        time.setText(String.format("0"));
+        scoreText.setText(String.format("0"));
         // Set window insets (optional)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
