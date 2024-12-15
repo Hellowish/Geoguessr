@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.View;
 
@@ -54,6 +55,7 @@ import java.util.Arrays;
 
 public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, OnStreetViewPanoramaReadyCallback {
 
+    private MediaPlayer backgroundMusic; // For background music
     public static float sum=0;
     private static LatLng answerCord;
     private static LatLng streetViewCoordinate;
@@ -89,6 +91,11 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_play);
+
+        // Initialize and play background music
+        backgroundMusic = MediaPlayer.create(this, R.raw.last);
+        backgroundMusic.setLooping(true); // Loop the music
+        backgroundMusic.start();
 
         client = new ChatGPTClient(this);
         currentQuestion = 0;
@@ -268,6 +275,33 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         intent.putExtra("score", score); // Pass score to ScoreActivity
         startActivity(intent);
         finish(); // Optional: Close the current activity
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (backgroundMusic != null && backgroundMusic.isPlaying()) {
+            backgroundMusic.pause(); // Pause music when activity is not visible
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (backgroundMusic != null && !backgroundMusic.isPlaying()) {
+            backgroundMusic.start(); // Resume music when activity is back in the foreground
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 釋放資源
+
+        if (backgroundMusic != null) {
+            backgroundMusic.stop();
+            backgroundMusic.release();
+            Log.d("Ranking", "backgroundMusic released");
+        }
     }
     @Override
     public void onMapReady(@NonNull GoogleMap map) {
