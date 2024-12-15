@@ -56,11 +56,11 @@ public class Home extends AppCompatActivity {
 
         // Apply pulse animation to play button
         ImageButton playButton = findViewById(R.id.play_button);
-        Animation pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.button_animation);
+        Animation pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.button_animation2);
         playButton.startAnimation(pulseAnimation);
 
         ImageButton rank = findViewById(R.id.profile_button);
-        Animation up = AnimationUtils.loadAnimation(this, R.anim.button_animation);
+        Animation up = AnimationUtils.loadAnimation(this, R.anim.button_animation3);
         rank.startAnimation(up);
 
         ImageButton score = findViewById(R.id.record_button);
