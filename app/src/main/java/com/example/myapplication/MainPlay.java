@@ -1,4 +1,6 @@
 package com.example.myapplication;
+import static android.app.PendingIntent.getActivity;
+
 import android.graphics.Color;
 import android.view.View;
 import androidx.fragment.app.Fragment;
@@ -82,7 +84,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
     private TextView timerText;
     private CountDownTimer countDownTimer;
-    private long timeLeftInMillis = 300000; // 30 seconds in milliseconds
+    private long timeLeftInMillis = 30000; // 30 seconds in milliseconds
 
     private ImageButton expandButton;
     private boolean isMapFragmentVisible = false;
@@ -218,6 +220,9 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
     }
 
     private void startTimer() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -227,7 +232,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
             @Override
             public void onFinish() {
-                switchToFailurePage();
+                resetQuestion();
             }
         }.start();
     }
@@ -377,7 +382,39 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         }
     }
 
-    private void resetQuestion() {
+    public void resetQuestion() {
+        // Inside your logic where currentQuestion is checked
+        if (currentQuestion >= 2) {
+            // Move to FailureActivity
+            Intent intent = new Intent(MainPlay.this, FailureActivity.class);
+            startActivity(intent);
+            finish(); // Optional: Close the current activity
+        }
+
+
+        // Find buttons and timer and hide them
+        ImageButton answerButton = findViewById(R.id.Answer);
+        ImageButton hintButton = findViewById(R.id.hint);
+        ImageButton expandButton = findViewById(R.id.expand);
+        TextView timerText = findViewById(R.id.timer_text);
+        ImageView box= findViewById(R.id.box);
+
+        if (answerButton != null) {
+            answerButton.setVisibility(View.VISIBLE);
+        }
+        if (hintButton != null) {
+            hintButton.setVisibility(View.VISIBLE);
+        }
+        if (expandButton != null) {
+            expandButton.setVisibility(View.VISIBLE);
+        }
+        if (timerText != null) {
+            timerText.setVisibility(View.VISIBLE);
+        }
+        if (box != null) {
+            box.setVisibility(View.VISIBLE);
+        }
+
         if (polyline != null) {
             polyline.remove();
         }
@@ -391,6 +428,8 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
         streetViewCoordinate = new LatLng(qLatitudes[currentQuestion], qLongitudes[currentQuestion]);
         streetViewIns.setPosition(streetViewCoordinate);
+        timeLeftInMillis = 30000;
+        startTimer();
     }
 
     // 計算兩個經緯度點之間的距離（單位：公里）

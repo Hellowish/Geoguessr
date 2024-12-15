@@ -1,10 +1,12 @@
 package com.example.myapplication;
 
+import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -16,6 +18,8 @@ public class ScoreFragment extends Fragment {
     public ScoreFragment() {
         // Required empty public constructor
     }
+
+    private ImageButton resetButton; // Declare the reset button
 
     public static ScoreFragment newInstance(double score) {
         ScoreFragment fragment = new ScoreFragment();
@@ -44,6 +48,27 @@ public class ScoreFragment extends Fragment {
 
         // Animate the score
         animateScore(score);
+
+        // Get the reset button and set click listener
+        resetButton = view.findViewById(R.id.reset_button);
+        resetButton.setOnClickListener(v -> {
+            // Check if the host activity is MainPlay and call resetQuestion
+            hideScoreFragment();
+            if (getActivity() instanceof MainPlay) {
+                MainPlay mainActivity = (MainPlay) getActivity();
+                mainActivity.resetQuestion(); // Call resetQuestion() method in MainPlay
+            }
+        });
+    }
+
+    private void hideScoreFragment() {
+        // Get the parent activity (MainPlay) to handle fragment transactions
+        if (getActivity() != null) {
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            // Remove the ScoreFragment
+            transaction.remove(this);
+            transaction.commit();
+        }
     }
 
     private void animateScore(final double finalScore) {
