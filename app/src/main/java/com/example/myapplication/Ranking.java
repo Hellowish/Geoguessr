@@ -4,7 +4,11 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.animation.ObjectAnimator;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.core.graphics.Insets;
@@ -16,6 +20,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,9 +73,7 @@ public class Ranking extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         // 設置初始資料
-        List<GameHistory> gameHistoryList = getInitialGameHistory();
-        GameHistoryAdapter adapter = new GameHistoryAdapter(gameHistoryList);
-        recyclerView.setAdapter(adapter);
+        getInitialGameHistory();
 
         // 設置 WindowInsets Listener 以處理邊緣間距
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -118,33 +123,66 @@ public class Ranking extends AppCompatActivity {
     }
 
     // 返回 11 筆初始資料
-    private List<GameHistory> getInitialGameHistory() {
-        List<GameHistory> gameHistoryList = new ArrayList<>();
+    private void getInitialGameHistory() {
+        new Thread(() -> {
+            List<GameHistory> gameHistoryList = new ArrayList<>();
+            try {
+                ApiHelper.readData(
+                        this,
+                        response -> {
+                            for (int i = 0; i < response.length(); i++) {
+                                try {
+                                    JSONObject data = response.getJSONObject(i);
+                                    int id = data.getInt("id");
+                                    int score = data.getInt("score");
+                                    String city = data.getString("city");
+                                    String town = data.getString("town");
+                                    String created_at = data.getString("created_at");
 
-        // 添加 11 筆遊戲歷史紀錄
-        for (int i = 1; i <= 20; i++) {
-            gameHistoryList.add(new GameHistory(
-                    "ID" + i,  // ID
-                    "2024-12-13 12:34",  // 時間
-                    String.valueOf(1000 + i),  // 分數
-                    "City" + i,  // 城市
-                    "Area" + i   // 區域
-            ));
-        }
+                                    Log.d("READ_DATA", "id: " + id + ", 分數: " + score + ", 城市: " + city);
+                                    gameHistoryList.add(new GameHistory(
+                                            id,  // ID
+                                            created_at,  // 時間
+                                            String.valueOf(score),  // 分數
+                                            city,  // 城市
+                                            town   // 區域
+                                    ));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
 
-        return gameHistoryList;
+                            // 使用 Handler 在 UI 執行緒中更新 UI
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                GameHistoryAdapter adapter = new GameHistoryAdapter(gameHistoryList);
+                                recyclerView.setAdapter(adapter);
+                            });
+
+                        },
+                        error -> {
+                            // 錯誤處理
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                Toast.makeText(this, "讀取失敗: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
-    // GameHistory 內部類別
-    public class GameHistory {
-        private String id;
-        private String time;
-        private String score;
-        private String city;
-        private String area;
 
-        public GameHistory(String id, String time, String score, String city, String area) {
-            this.id = id;
+    // GameHistory 內部類別
+    public static class GameHistory {
+        private final String id;
+        private final String time;
+        private final String score;
+        private final String city;
+        private final String area;
+
+        public GameHistory(int id, String time, String score, String city, String area) {
+            this.id = String.valueOf(id);
             this.time = time;
             this.score = score;
             this.city = city;
@@ -173,14 +211,15 @@ public class Ranking extends AppCompatActivity {
     }
 
     // GameHistoryAdapter 內部類別
-    public class GameHistoryAdapter extends RecyclerView.Adapter<GameHistoryAdapter.ViewHolder> {
+    public static class GameHistoryAdapter extends RecyclerView.Adapter<GameHistoryAdapter.ViewHolder> {
 
-        private List<GameHistory> gameHistoryList;
+        private final List<GameHistory> gameHistoryList;
 
         public GameHistoryAdapter(List<GameHistory> gameHistoryList) {
             this.gameHistoryList = gameHistoryList;
         }
 
+        @NonNull
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_game_history, parent, false);
@@ -202,7 +241,7 @@ public class Ranking extends AppCompatActivity {
             return gameHistoryList.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
+        public static class ViewHolder extends RecyclerView.ViewHolder {
             TextView idTextView, timeTextView, scoreTextView, cityTextView, areaTextView;
 
             public ViewHolder(View itemView) {

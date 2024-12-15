@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 
 import androidx.fragment.app.FragmentTransaction;
@@ -100,8 +101,8 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
         // Retrieve qlatLng from Intent
         maxDistance = getIntent().getDoubleExtra("maxDistance", 200);
-        city = new String[]{getIntent().getStringExtra("city")};
-        town = new String[]{getIntent().getStringExtra("town")};
+        city = getIntent().getStringArrayExtra("city");
+        town = getIntent().getStringArrayExtra("town");
         qLatitudes = getIntent().getDoubleArrayExtra("qLatitudes");
         qLongitudes = getIntent().getDoubleArrayExtra("qLongitudes");
         // Log.d("qLatitudesInfo", "City: " + qLatitudes[0]);
@@ -193,6 +194,25 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         transaction.replace(R.id.fragment_container, scoreFragment);
         transaction.addToBackStack(null); // Optional: Add to back stack
         transaction.commit();
+
+        ApiHelper.insertData(
+                this,
+                "player",       // 玩家名稱
+                calculateScore(),
+                city[currentQuestion],
+                town[currentQuestion],
+                streetViewCoordinate.latitude,       // 緯度
+                streetViewCoordinate.longitude,     // 經度
+                response -> {
+                    // 成功回應
+
+                },
+                error -> {
+                    // 錯誤處理
+                    Toast.makeText(this, "插入失敗: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.d("DEBUG", error.getMessage());
+                }
+        );
     }
 
     private void toggleFragmentVisibility() {
