@@ -107,7 +107,7 @@ public class ScoreFragment extends Fragment {
                     }
 
                     // Update the TextView with the current score (formatted to 2 decimal places)
-                    scoreTextView.setText(String.format("%.0f", 100 * currentScore[0]));
+                    scoreTextView.setText(String.format("%.0f", currentScore[0]));
 
                     // Repeat this update after the defined interval
                     new Handler().postDelayed(this, updateInterval);

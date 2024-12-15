@@ -29,7 +29,7 @@ public class FailureActivity extends AppCompatActivity {
 
         // Display or use the sum value as needed
         TextView sumTextView = findViewById(R.id.sumTextView); // Assume you have a TextView with this ID
-        sumTextView.setText("Total Score: " + sum);
+        sumTextView.setText(String.format("%.0f",sum));
 
         ImageButton playButton = findViewById(R.id.retry);
         Animation pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.button_animation);
