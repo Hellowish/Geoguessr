@@ -41,7 +41,7 @@ public class FailureActivity extends AppCompatActivity {
         playButton.startAnimation(pulseAnimation);
 
         // Play background music
-        mediaPlayer = MediaPlayer.create(this, R.raw.failure_music);
+        mediaPlayer = MediaPlayer.create(this, R.raw.victory);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
 
