@@ -37,10 +37,17 @@ public class Ranking extends AppCompatActivity {
     private MediaPlayer clickSound; // 用於播放點擊音效
     private RecyclerView recyclerView; // 用來顯示遊戲歷史紀錄的 RecyclerView
 
+    private MediaPlayer backgroundMusic; // For background music
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ranking);
+
+        // Initialize and play background music
+        backgroundMusic = MediaPlayer.create(this, R.raw.rank);
+        backgroundMusic.setLooping(true); // Loop the music
+        backgroundMusic.start();
 
         // 添加淡入效果
         View view = findViewById(android.R.id.content);
@@ -122,12 +129,32 @@ public class Ranking extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (backgroundMusic != null && backgroundMusic.isPlaying()) {
+            backgroundMusic.pause(); // Pause music when activity is not visible
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (backgroundMusic != null && !backgroundMusic.isPlaying()) {
+            backgroundMusic.start(); // Resume music when activity is back in the foreground
+        }
+    }
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         // 釋放資源
         if (clickSound != null) {
             clickSound.release();
             Log.d("Ranking", "clickSound released");
+        }
+        if (backgroundMusic != null) {
+            backgroundMusic.stop();
+            backgroundMusic.release();
+            Log.d("Ranking", "backgroundMusic released");
         }
     }
 

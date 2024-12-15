@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -27,6 +28,8 @@ import java.util.List;
 public class User extends AppCompatActivity {
 
 
+    private MediaPlayer backgroundMusic; // For background music
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +37,11 @@ public class User extends AppCompatActivity {
         setContentView(R.layout.activity_user);
 
         getInitialGameHistory();
+
+        // Initialize and play background music
+        backgroundMusic = MediaPlayer.create(this, R.raw.mu);
+        backgroundMusic.setLooping(true); // Loop the music
+        backgroundMusic.start();
 
         // Set window insets (optional)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -54,6 +62,32 @@ public class User extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (backgroundMusic != null && backgroundMusic.isPlaying()) {
+            backgroundMusic.pause(); // Pause music when activity is not visible
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (backgroundMusic != null && !backgroundMusic.isPlaying()) {
+            backgroundMusic.start(); // Resume music when activity is back in the foreground
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 釋放資源
+
+        if (backgroundMusic != null) {
+            backgroundMusic.stop();
+            backgroundMusic.release();
+            Log.d("Ranking", "backgroundMusic released");
+        }
+    }
     private void getInitialGameHistory() {
         new Thread(() -> {
             try {
