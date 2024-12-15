@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +23,10 @@ public class FailureActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_failure);
+
+        ImageButton playButton = findViewById(R.id.retry);
+        Animation pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.button_animation);
+        playButton.startAnimation(pulseAnimation);
 
         // Play background music
         mediaPlayer = MediaPlayer.create(this, R.raw.failure_music); // Replace "failure_music" with your audio file name in res/raw
