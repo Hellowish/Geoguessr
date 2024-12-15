@@ -59,6 +59,8 @@ public class User extends AppCompatActivity {
             // Navigate to MainActivity (Home)
             Intent intent = new Intent(User.this, Home.class);
             startActivity(intent);
+
+            overridePendingTransition(R.anim.record_out, R.anim.record_in);
         });
     }
 

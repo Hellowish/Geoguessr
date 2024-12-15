@@ -189,6 +189,8 @@ public class Home extends AppCompatActivity {
 
             // Apply button scale animation
             animateButtonClick(v);
+
+            overridePendingTransition(R.anim.record_in, R.anim.record_out);
         });
 
         // Spinner setup for cities and towns (same as before)

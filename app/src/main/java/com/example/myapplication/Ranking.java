@@ -158,7 +158,7 @@ public class Ranking extends AppCompatActivity {
         }
     }
 
-    // 返回 11 筆初始資料
+    // 返回資料
     private void getInitialGameHistory() {
         new Thread(() -> {
             List<GameHistory> gameHistoryList = new ArrayList<>();
