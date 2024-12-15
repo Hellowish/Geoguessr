@@ -81,10 +81,16 @@ public class FailureActivity extends AppCompatActivity {
      * Navigate back to the home screen.
      */
     private void navigateToHome() {
-        Intent intent = new Intent(this, Home.class); // Replace `Home` with your home activity class
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+        Intent intent = new Intent(this, Home.class);
         startActivity(intent);
-        finish(); // Close the current activity
+        finish();
     }
+
 
     @Override
     protected void onDestroy() {
@@ -96,4 +102,5 @@ public class FailureActivity extends AppCompatActivity {
             mediaPlayer = null;
         }
     }
+
 }

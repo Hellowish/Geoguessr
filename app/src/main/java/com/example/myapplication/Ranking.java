@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import static java.security.AccessController.getContext;
+
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -15,6 +17,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.view.View;
 import android.widget.TextView;
@@ -51,6 +56,10 @@ public class Ranking extends AppCompatActivity {
 
         // 初始化 return_button
         ImageButton returnButton = findViewById(R.id.return_button);
+
+        Animation pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.button_animation);
+        returnButton.startAnimation(pulseAnimation);
+
         returnButton.setOnClickListener(v -> {
             // 播放點擊音效
             playClickSound();

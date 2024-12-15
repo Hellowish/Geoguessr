@@ -7,19 +7,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/fina"><![CDATA[
     tools:context=".FailureActivity">
-
-
-
-
-
-
-
-
-
-
-
-
-
     ]]>
 
     <ImageButton
