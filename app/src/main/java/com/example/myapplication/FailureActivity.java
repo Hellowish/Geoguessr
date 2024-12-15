@@ -72,7 +72,7 @@ public class FailureActivity extends AppCompatActivity {
         animator.setDuration(5000); // Duration of the animation in milliseconds
         animator.addUpdateListener(animation -> {
             float animatedValue = (float) animation.getAnimatedValue();
-            textView.setText(String.format("%.0f", animatedValue)); // Update the TextView with the current value
+            textView.setText(String.format("%.0f", animatedValue/2)); // Update the TextView with the current value
         });
         animator.start();
     }

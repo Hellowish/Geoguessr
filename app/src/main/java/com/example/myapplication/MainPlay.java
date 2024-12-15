@@ -91,7 +91,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_play);
-
+        sum=0;
         // Initialize and play background music
         backgroundMusic = MediaPlayer.create(this, R.raw.last);
         backgroundMusic.setLooping(true); // Loop the music
@@ -508,7 +508,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         double distance = haversine(streetViewCoordinate.latitude, streetViewCoordinate.longitude,
                 answerCord.latitude, answerCord.longitude);
         // 計算分數
-        sum += Math.max(1, 100 - (distance / maxDistance) * 100);
+        sum += (int)Math.max(1, 100 - (distance / maxDistance) * 100);
         return (int)Math.max(1, 100 - (distance / maxDistance) * 100);
     }
 }
