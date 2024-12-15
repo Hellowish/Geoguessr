@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Initialize MediaPlayer with a music file
-        mediaPlayer = MediaPlayer.create(this, R.raw.background_music)
+        mediaPlayer = MediaPlayer.create(this, R.raw.main)
         mediaPlayer.isLooping = true
         mediaPlayer.start()
 
@@ -35,17 +35,15 @@ class MainActivity : AppCompatActivity() {
             background.start()
         }
 
-        // Start button animation
-        val button = findViewById<ImageButton>(R.id.button)
-        val animation = AnimationUtils.loadAnimation(this, R.anim.button_animation)
-        button.startAnimation(animation)
-
-        // Button click listener to navigate to Home activity
-        button.setOnClickListener {
+        // Set up click listener on the screen to go to HomeActivity
+        backgroundLayout.setOnClickListener {
             val intent = Intent(this, Home::class.java)
             startActivity(intent)
+            // Optional: If you want to finish MainActivity after navigating
+            finish()
         }
 
+        // Handle window insets for edge-to-edge layout
         ViewCompat.setOnApplyWindowInsetsListener(backgroundLayout) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
