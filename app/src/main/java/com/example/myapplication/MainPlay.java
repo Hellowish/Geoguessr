@@ -388,6 +388,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         if (currentQuestion >= 2) {
             // Move to FailureActivity
             Intent intent = new Intent(MainPlay.this, FailureActivity.class);
+            intent.putExtra("sum", sum); // Pass the sum value to FailureActivity
             startActivity(intent);
             finish(); // Optional: Close the current activity
         }

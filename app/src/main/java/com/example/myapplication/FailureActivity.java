@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +24,12 @@ public class FailureActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_failure);
+        // Retrieve the passed sum value
+        float sum = getIntent().getFloatExtra("sum", 0.0f);
+
+        // Display or use the sum value as needed
+        TextView sumTextView = findViewById(R.id.sumTextView); // Assume you have a TextView with this ID
+        sumTextView.setText("Total Score: " + sum);
 
         ImageButton playButton = findViewById(R.id.retry);
         Animation pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.button_animation);
