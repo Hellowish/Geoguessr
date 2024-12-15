@@ -60,6 +60,7 @@ import org.json.JSONObject;
 
 public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, OnStreetViewPanoramaReadyCallback {
 
+    public static float sum=0;
     private static LatLng answerCord;
     private static LatLng streetViewCoordinate;
 
@@ -457,6 +458,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         double distance = haversine(streetViewCoordinate.latitude, streetViewCoordinate.longitude,
                 answerCord.latitude, answerCord.longitude);
         // 計算分數
+        sum += Math.max(0, 100 - (distance / maxDistance) * 100);
         return Math.max(0, 100 - (distance / maxDistance) * 100);
     }
 }
