@@ -384,8 +384,8 @@ public class Home extends AppCompatActivity {
                                 double longitude = data.getDouble("longitude");
 
                                 // 進行必要的處理
-                                latitude = Math.round(latitude * 1000.0) / 1000.0;
-                                longitude = Math.round(longitude * 1000.0) / 1000.0;
+                                latitude = Math.round(latitude * 10000.0) / 10000.0;
+                                longitude = Math.round(longitude * 10000.0) / 10000.0;
 
                                 // 保存解析出來的資料
                                 qCities[i] = returnCity;
