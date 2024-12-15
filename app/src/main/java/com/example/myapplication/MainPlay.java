@@ -1,16 +1,13 @@
 package com.example.myapplication;
-import static android.app.PendingIntent.getActivity;
 
 import android.graphics.Color;
 import android.view.View;
-import androidx.fragment.app.Fragment;
+
 import androidx.fragment.app.FragmentTransaction;
-import androidx.fragment.app.FragmentManager;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,8 +21,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -55,8 +50,6 @@ import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.util.Arrays;
-
-import org.json.JSONObject;
 
 public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, OnStreetViewPanoramaReadyCallback {
 
@@ -113,6 +106,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         qLongitudes = getIntent().getDoubleArrayExtra("qLongitudes");
         // Log.d("qLatitudesInfo", "City: " + qLatitudes[0]);
 
+        assert qLongitudes != null;
         streetViewCoordinate = new LatLng(qLatitudes[currentQuestion], qLongitudes[currentQuestion]);
 
 
@@ -295,7 +289,6 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         streetViewIns.setPosition(streetViewCoordinate);
     }
 
-    String quetionResult = null;
     private void showHintPopup() {
         new AlertDialog.Builder(this)
                 .setTitle("Are you sure?")
@@ -307,7 +300,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
     private void showHintDetailsPopup() {
         // 输入问题
-        String question = "請根據" + city + town +
+        String question = "請根據" + city[currentQuestion] + town[currentQuestion] +
                 "，提供其文化、地理或歷史相關的線索，但不要直接說出縣市或行政區的名稱，讓人通過線索猜出是什麼地方，不要太多字。";
 
         // 调用 ChatGPT 接口
@@ -315,6 +308,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
             @Override
             public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
                 if (response.isSuccessful()) {
+                    assert response.body() != null;
                     String responseBody = response.body().string();
 
                     // 解析返回结果
@@ -430,6 +424,8 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
         streetViewCoordinate = new LatLng(qLatitudes[currentQuestion], qLongitudes[currentQuestion]);
         streetViewIns.setPosition(streetViewCoordinate);
+        mapIns.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(23.975667, 120.973861), 8f));
+        currentMarker.remove();
         timeLeftInMillis = 30000;
         startTimer();
     }
@@ -450,16 +446,15 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
         // 地球半徑（公里）
         double R = 6371.0;
-        double distance = R * c;
-        return distance;
+        return R * c;
     }
 
-    public static double calculateScore() {
+    public static int calculateScore() {
         // 計算距離
         double distance = haversine(streetViewCoordinate.latitude, streetViewCoordinate.longitude,
                 answerCord.latitude, answerCord.longitude);
         // 計算分數
-        sum += Math.max(0, 100 - (distance / maxDistance) * 100);
-        return Math.max(0, 100 - (distance / maxDistance) * 100);
+        sum += Math.max(0, 100 - (int)(distance / maxDistance));
+        return Math.max(0, 100 - (int)(distance / maxDistance));
     }
 }
