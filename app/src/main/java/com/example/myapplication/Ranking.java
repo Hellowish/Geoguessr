@@ -95,7 +95,7 @@ public class Ranking extends AppCompatActivity {
         ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(view, "scaleY", 1f, 1.1f); // Y 軸縮放
         scaleUpX.setDuration(100); // 放大時的持續時間
         scaleUpY.setDuration(100); // 放大時的持續時間
-        scaleUpX.start();
+            scaleUpX.start();
         scaleUpY.start();
 
         // 放大後再恢復到原始大小

@@ -42,7 +42,7 @@ public class ChatGPTClient {
     // 從後端獲取 openAIKey
     private void fetchApiKeyFromServer(Response.Listener<JSONObject> listener,
                                        Response.ErrorListener errorListener) {
-        ApiHelper.fetchCoordinates(context, "api_key", "", listener, errorListener);
+        ApiHelper.fetchAPI(context, "api_key", "", listener, errorListener);
     }
 
     // 發送訊息到 OpenAI

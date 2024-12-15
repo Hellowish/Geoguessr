@@ -1,4 +1,5 @@
 package com.example.myapplication;
+import android.graphics.Color;
 import android.view.View;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -23,6 +24,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,11 +32,19 @@ import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
 import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.SupportStreetViewPanoramaFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Dash;
+import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
 import com.google.android.gms.maps.model.StreetViewPanoramaOrientation;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import okhttp3.Callback;
 import okhttp3.Call;
@@ -42,6 +52,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.json.JSONObject;
 
@@ -51,10 +62,18 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
     private static LatLng streetViewCoordinate;
 
     public static double maxDistance;
-    public static String city;
-    public static String town;
+
+    public static String[] city = new String[3];
+    public static String[] town = new String[3];
+
+    double[] qLatitudes = new double[3];
+    double[] qLongitudes = new double[3];
+
+    int currentQuestion;
 
     private Marker currentMarker;
+    private Marker answerMarker;
+    private Polyline polyline;
     private GoogleMap mapIns;
 
     private static StreetViewPanorama streetViewIns;
@@ -75,6 +94,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         setContentView(R.layout.activity_main_play);
 
         client = new ChatGPTClient(this);
+        currentQuestion = 0;
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -83,10 +103,14 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         });
 
         // Retrieve qlatLng from Intent
-        streetViewCoordinate = getIntent().getParcelableExtra("qlatLng");
         maxDistance = getIntent().getDoubleExtra("maxDistance", 200);
-        city = getIntent().getStringExtra("city");
-        town = getIntent().getStringExtra("town");
+        city = new String[]{getIntent().getStringExtra("city")};
+        town = new String[]{getIntent().getStringExtra("town")};
+        qLatitudes = getIntent().getDoubleArrayExtra("qLatitudes");
+        qLongitudes = getIntent().getDoubleArrayExtra("qLongitudes");
+        // Log.d("qLatitudesInfo", "City: " + qLatitudes[0]);
+
+        streetViewCoordinate = new LatLng(qLatitudes[currentQuestion], qLongitudes[currentQuestion]);
 
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
@@ -149,6 +173,24 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
                 R.anim.fragment_slide_in,  // Fragment enter animation
                 R.anim.fragment_slide_out // Fragment exit animation
         );
+
+        // 在點擊位置新增 Marker
+        BitmapDescriptor blueMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+        answerMarker = mapIns.addMarker(new MarkerOptions()
+                .position(streetViewCoordinate) // Marker 的位置
+                .title("") // Marker 的標題
+                .snippet("")
+                .icon(blueMarker));
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(currentMarker.getPosition());
+        builder.include(answerMarker.getPosition());
+        LatLngBounds bounds = builder.build();
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100);
+        mapIns.moveCamera(cameraUpdate);
+
+        // 绘制线
+        drawLineBetweenMarkers();
 
         // Replace the container with the score fragment
         transaction.replace(R.id.fragment_container, scoreFragment);
@@ -315,6 +357,37 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
     private void showError(String errorMessage) {
         Toast.makeText(MainPlay.this, errorMessage, Toast.LENGTH_LONG).show();
+    }
+
+    private void drawLineBetweenMarkers() {
+        if (answerMarker != null && currentMarker != null) {
+            LatLng point1 = answerMarker.getPosition();
+            LatLng point2 = currentMarker.getPosition();
+
+            PatternItem dash = new Dash(30);  // 30 pixels for the dash length
+            PatternItem gap = new Gap(20);    // 20 pixels for the gap between dashes
+            java.util.List<PatternItem> pattern = Arrays.asList(dash, gap);
+
+            // Create PolylineOptions with the dashed pattern
+            PolylineOptions options = new PolylineOptions()
+                    .add(point1, point2)
+                    .width(10)
+                    .color(Color.BLACK)
+                    .pattern(pattern); // 你可以改变线的宽度和颜色
+
+            // 添加 Polyline 到地图
+            polyline = mapIns.addPolyline(options);
+        }
+    }
+
+    private void resetMapAnswer() {
+        if (polyline != null) {
+            polyline.remove();
+        }
+
+        if (answerMarker != null) {
+            answerMarker.remove();
+        }
     }
 
     // 計算兩個經緯度點之間的距離（單位：公里）

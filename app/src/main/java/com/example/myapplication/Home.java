@@ -27,6 +27,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.android.gms.maps.model.LatLng;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Objects;
@@ -39,10 +40,10 @@ public class Home extends AppCompatActivity {
     private String city = "taiwan";
     private String town;
 
-    public String returnCity;
-    public String returnTown;
-
-    private LatLng qlatLng;
+    String[] qCities = new String[3];
+    String[] qTowns = new String[3];
+    double[] qLatitudes = new double[3];
+    double[] qLongitudes = new double[3];
 
     private ProgressBar progressBar; // Declare ProgressBar
     private TextView percentageText;
@@ -142,9 +143,10 @@ public class Home extends AppCompatActivity {
 
                             // Start MainPlay Activity after completion
                             Intent intent = new Intent(Home.this, MainPlay.class);
-                            intent.putExtra("qlatLng", qlatLng);
-                            intent.putExtra("city", returnCity);
-                            intent.putExtra("town", returnTown);
+                            intent.putExtra("qLatitudes", qLatitudes);
+                            intent.putExtra("qLongitudes", qLongitudes);
+                            intent.putExtra("city", qCities);
+                            intent.putExtra("town", qTowns);
 
                             // Set max distance based on city
                             if ("taiwan".equals(city))
@@ -362,24 +364,38 @@ public class Home extends AppCompatActivity {
 
     public void RequestQuestion(String city, String town, RequestQuestionCallback callback) {
         ApiHelper.fetchCoordinates(this, city, town,
-                new Response.Listener<JSONObject>() {
+                new Response.Listener<JSONArray>() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(JSONArray response) {
                         try {
-                            // 解析城市、城鎮、緯度和經度
-                            returnCity = response.getString("city");
-                            returnTown = response.getString("town");
-                            double latitude = response.getDouble("latitude");
-                            double longitude = response.getDouble("longitude");
+                            // 遍歷整個 JSONArray
+                            if (response.length() == 0) {
+                                Log.d("DEBUG", "No data found in the response.");
+                                return;  // 如果資料為空，則不繼續處理
+                            }
 
-                            // 進行必要的處理，比如四捨五入
-                            latitude = Math.round(latitude * 1000.0) / 1000.0;
-                            longitude = Math.round(longitude * 1000.0) / 1000.0;
+                            // 如果有資料，開始處理
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject data = response.getJSONObject(i);
+                                // 解析每一筆資料
+                                String returnCity = data.getString("city");
+                                String returnTown = data.getString("town");
+                                double latitude = data.getDouble("latitude");
+                                double longitude = data.getDouble("longitude");
 
-                            qlatLng = new LatLng(latitude, longitude);
+                                // 進行必要的處理
+                                latitude = Math.round(latitude * 1000.0) / 1000.0;
+                                longitude = Math.round(longitude * 1000.0) / 1000.0;
 
-                            // 可以將城市和城鎮資訊傳遞給其他部分的代碼
-                            Log.d("City Info", "City: " + returnCity + ", Town: " + returnTown);
+                                // 保存解析出來的資料
+                                qCities[i] = returnCity;
+                                qTowns[i] = returnTown;
+                                qLatitudes[i] = latitude;
+                                qLongitudes[i] = longitude;
+
+                                // 輸出資料
+                                Log.d("City Info", "City: " + returnCity + ", Town: " + returnTown);
+                            }
 
                             // 延遲隱藏 ProgressBar，確保動畫完成後再隱藏
                             progressBar.postDelayed(new Runnable() {
@@ -388,7 +404,7 @@ public class Home extends AppCompatActivity {
                                     progressBar.setVisibility(View.GONE);
                                     callback.onRequestQuestionCompleted(); // 呼叫完成的回調
                                 }
-                            }, 500); // 延遲500ms，根據需要調整延遲時間
+                            }, 0); // 延遲500ms，根據需要調整延遲時間
 
                         } catch (Exception e) {
                             Toast.makeText(Home.this,
