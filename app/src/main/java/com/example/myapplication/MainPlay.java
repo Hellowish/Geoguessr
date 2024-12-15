@@ -198,9 +198,6 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         transaction.commit();
     }
 
-
-
-
     private void toggleFragmentVisibility() {
         if (mapFragment != null) {
             if (isMapFragmentVisible) {
@@ -380,7 +377,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         }
     }
 
-    private void resetMapAnswer() {
+    private void resetQuestion() {
         if (polyline != null) {
             polyline.remove();
         }
@@ -388,6 +385,12 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         if (answerMarker != null) {
             answerMarker.remove();
         }
+
+        if(currentQuestion < 3)
+            currentQuestion++;
+
+        streetViewCoordinate = new LatLng(qLatitudes[currentQuestion], qLongitudes[currentQuestion]);
+        streetViewIns.setPosition(streetViewCoordinate);
     }
 
     // 計算兩個經緯度點之間的距離（單位：公里）
