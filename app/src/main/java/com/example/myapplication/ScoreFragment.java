@@ -6,6 +6,8 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -51,6 +53,10 @@ public class ScoreFragment extends Fragment {
 
         // Get the reset button and set click listener
         resetButton = view.findViewById(R.id.reset_button);
+
+        Animation fadeIn = AnimationUtils.loadAnimation(getContext(), R.anim.button_animation);
+        resetButton.startAnimation(fadeIn);
+
         resetButton.setOnClickListener(v -> {
             // Check if the host activity is MainPlay and call resetQuestion
             hideScoreFragment();
