@@ -54,6 +54,11 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_home); // Load the game_home layout
 
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(Color.WHITE); // Set to white
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR); // Dark icons
+        }
+
         // Apply pulse animation to play button
         ImageButton playButton = findViewById(R.id.play_button);
         Animation pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.button_animation2);
