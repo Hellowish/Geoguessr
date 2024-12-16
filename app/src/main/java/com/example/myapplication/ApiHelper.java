@@ -45,20 +45,20 @@ public class ApiHelper {
     }
 
     public static void fetchCoordinates(Context context, String city, String town,
-                                        Response.Listener<JSONArray> listener,
+                                        Response.Listener<JSONObject> listener,
                                         Response.ErrorListener errorListener) {
         if (Objects.equals(city, "taiwan"))
             town = "";
 
         String url = BASE_URL + "?city=" + city + "&town=" + town;
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET, url, null,
                 listener,
                 errorListener
         );
 
-        RequestQueueSingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
+        RequestQueueSingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
     }
 
     // =======================

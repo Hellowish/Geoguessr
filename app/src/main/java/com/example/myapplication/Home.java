@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -366,9 +367,10 @@ public class Home extends AppCompatActivity {
 
     public void RequestQuestion(String city, String town, RequestQuestionCallback callback) {
         ApiHelper.fetchCoordinates(this, city, town,
-                new Response.Listener<JSONArray>() {
+                new Response.Listener<JSONObject>() {
+                    @SuppressLint("SuspiciousIndentation")
                     @Override
-                    public void onResponse(JSONArray response) {
+                    public void onResponse(JSONObject response) {
                         try {
                             // 遍歷整個 JSONArray
                             if (response.length() == 0) {
@@ -377,27 +379,24 @@ public class Home extends AppCompatActivity {
                             }
 
                             // 如果有資料，開始處理
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject data = response.getJSONObject(i);
-                                // 解析每一筆資料
-                                String returnCity = data.getString("city");
-                                String returnTown = data.getString("town");
-                                double latitude = data.getDouble("latitude");
-                                double longitude = data.getDouble("longitude");
+                            // 解析每一筆資料
+                            String returnCity = response.getString("city");
+                            String returnTown = response.getString("town");
+                            double latitude = response.getDouble("latitude");
+                            double longitude = response.getDouble("longitude");
 
-                                // 進行必要的處理
-                                latitude = Math.round(latitude * 10000.0) / 10000.0;
-                                longitude = Math.round(longitude * 10000.0) / 10000.0;
+                            // 進行必要的處理
+                            latitude = Math.round(latitude * 10000.0) / 10000.0;
+                            longitude = Math.round(longitude * 10000.0) / 10000.0;
 
-                                // 保存解析出來的資料
-                                qCities[i] = returnCity;
-                                qTowns[i] = returnTown;
-                                qLatitudes[i] = latitude;
-                                qLongitudes[i] = longitude;
+                            // 保存解析出來的資料
+                            qCities[0] = city;
+                            qTowns[0] = town;
+                            qLatitudes[0] = latitude;
+                            qLongitudes[0] = longitude;
 
                                 // 輸出資料
                                 Log.d("City Info", "City: " + returnCity + ", Town: " + returnTown);
-                            }
 
                             // 延遲隱藏 ProgressBar，確保動畫完成後再隱藏
                             progressBar.postDelayed(new Runnable() {

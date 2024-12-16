@@ -23,6 +23,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -41,6 +43,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
+import com.google.android.gms.maps.model.StreetViewPanoramaLocation;
 import com.google.android.gms.maps.model.StreetViewPanoramaOrientation;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -49,6 +52,9 @@ import okhttp3.Callback;
 import okhttp3.Call;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -480,12 +486,93 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         if(currentQuestion < 3)
             currentQuestion++;
 
-        streetViewCoordinate = new LatLng(qLatitudes[currentQuestion], qLongitudes[currentQuestion]);
-        streetViewIns.setPosition(streetViewCoordinate);
+        RequestQuestion(city[0], town[0], new RequestQuestionCallback() {
+            @Override
+            public void onRequestQuestionCompleted() {
+                streetViewCoordinate = new LatLng(qLatitudes[currentQuestion], qLongitudes[currentQuestion]);
+
+                // 設置 StreetViewPanorama 並檢查是否有街景資料
+                streetViewIns.setPosition(streetViewCoordinate);
+                Log.d("StreetView", "Street View data found: " + streetViewCoordinate);
+
+                streetViewIns.setOnStreetViewPanoramaChangeListener(new StreetViewPanorama.OnStreetViewPanoramaChangeListener() {
+                    private int retryCount = 0;
+                    private final int MAX_RETRY = 5; // 最大重試次數
+
+                    @Override
+                    public void onStreetViewPanoramaChange(StreetViewPanoramaLocation location) {
+                        if (location != null && location.links != null) {
+                            // 有街景資料
+                            Log.d("StreetView", "Street View data found: " + streetViewCoordinate);
+                            // 正常處理邏輯...
+                        } else {
+                            // 無街景資料，重試
+                            retryCount++;
+                            if (retryCount < MAX_RETRY) {
+                                Log.d("StreetView", "No data, retrying... Attempt: " + retryCount);
+                                RequestQuestion(city[0], town[0], (RequestQuestionCallback) MainPlay.this);
+                            } else {
+                                Log.d("StreetView", "Max retries reached. No Street View data available.");
+                                Toast.makeText(MainPlay.this, "No Street View data found after retries.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
         mapIns.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(23.975667, 120.973861), 8f));
         currentMarker.remove();
+
         timeLeftInMillis = 30000;
         startTimer();
+    }
+
+    public void RequestQuestion(String ity, String own, RequestQuestionCallback callback) {
+        ApiHelper.fetchCoordinates(this, ity, own,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // 遍歷整個 JSONArray
+                            if (response.length() == 0) {
+                                Log.d("DEBUG", "No data found in the response.");
+                                return;  // 如果資料為空，則不繼續處理
+                            }
+
+                            // 如果有資料，開始處理
+                            // 解析每一筆資料
+                            String returnCity = response.getString("city");
+                            String returnTown = response.getString("town");
+                            double latitude = response.getDouble("latitude");
+                            double longitude = response.getDouble("longitude");
+
+                            // 進行必要的處理
+                            qLatitudes[currentQuestion] = Math.round(latitude * 10000.0) / 10000.0;
+                            qLongitudes[currentQuestion] = Math.round(longitude * 10000.0) / 10000.0;
+
+                            // 保存解析出來的資料
+                            city[currentQuestion] = returnCity;
+                            town[currentQuestion] = returnTown;
+
+                            callback.onRequestQuestionCompleted();
+                        } catch (Exception e) {
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainPlay.this,
+                                "Error: " + error.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+        );
+    }
+
+    public interface RequestQuestionCallback {
+        void onRequestQuestionCompleted();  // 當處理完成後調用
     }
 
     // 計算兩個經緯度點之間的距離（單位：公里）
