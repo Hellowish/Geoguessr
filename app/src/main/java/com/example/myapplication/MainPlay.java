@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.CountDownTimer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -89,6 +90,10 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
     private CountDownTimer countDownTimer;
     private long timeLeftInMillis = 30000; // 30 seconds in milliseconds
 
+    private TextView countdownText;  // 用來顯示3秒倒數的TextView
+    private Handler handler = new Handler();
+    private int countdown = 3;  // 倒數秒數
+
     private ImageButton expandButton;
     private boolean isMapFragmentVisible = false;
 
@@ -97,6 +102,11 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_play);
+
+        countdownText = findViewById(R.id.countdownText);  // 獲取顯示倒數的 TextView
+
+        startCountdown();
+
         sum=0;
         // Initialize and play background music
         backgroundMusic = MediaPlayer.create(this, R.raw.last);
@@ -139,14 +149,43 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         expandButton = findViewById(R.id.expand);
         expandButton.setOnClickListener(v -> toggleFragmentVisibility());
 
-        // Start the countdown timer
-        startTimer();
-
         // Set up the hint button
         findViewById(R.id.hint).setOnClickListener(view -> showHintPopup());
         getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();
         // Set up the answer button
         findViewById(R.id.Answer).setOnClickListener(v -> showScoreFragment());
+    }
+
+    private void startCountdown() {
+        // 顯示倒數計時器
+        countdownText.setVisibility(View.VISIBLE);
+
+        final Runnable countdownRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // 更新倒數顯示
+                countdownText.setText(String.valueOf(countdown));
+
+                // 當倒數結束時開始遊戲，並隱藏倒數計時器
+                if (countdown == 0) {
+                    startGame();
+                } else {
+                    countdown--;  // 減少倒數秒數
+                    handler.postDelayed(this, 1000);  // 延遲1秒再次執行
+                }
+            }
+        };
+
+        // 開始倒數
+        handler.post(countdownRunnable);
+    }
+
+    private void startGame() {
+        // 當倒數結束後，開始遊戲
+        countdownText.setVisibility(View.GONE);  // 隱藏倒數計時器
+        countdownText.setText("");  // 清除顯示的數字
+
+        startTimer();
     }
 
     private void showScoreFragment() {
