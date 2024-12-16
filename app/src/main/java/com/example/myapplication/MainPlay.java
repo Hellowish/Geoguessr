@@ -351,6 +351,43 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         );
 
         streetViewIns.setPosition(streetViewCoordinate);
+
+        final int MAX_RETRY_COUNT = 5; // 最大重試次數
+        final int[] retryCount = {0}; // 當前重試次數
+        // 添加監聽器來檢查街景資料是否存在
+        streetViewIns.setOnStreetViewPanoramaChangeListener(new StreetViewPanorama.OnStreetViewPanoramaChangeListener() {
+            @Override
+            public void onStreetViewPanoramaChange(StreetViewPanoramaLocation location) {
+                if (location != null && location.links != null) {
+                    // 有街景資料
+                    Log.d("StreetView", "Street View data found at this location.");
+                    retryCount[0] = 0; // 重置重試次數
+                } else {
+                    // 沒有街景資料
+                    retryCount[0]++;
+                    Log.d("StreetView", "No Street View data available. Retry count: " + retryCount[0]);
+
+                    if (retryCount[0] < MAX_RETRY_COUNT) {
+                        retryRequestQuestion(); // 重新請求新座標
+                    } else {
+                        Log.d("StreetView", "Max retry limit reached. No Street View data available.");
+                        Toast.makeText(getApplicationContext(), "No Street View data after 5 attempts.", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        });
+    }
+
+    private void retryRequestQuestion() {
+        // 請求新座標並再次設置 StreetView
+        RequestQuestion(0, city[0], town[0], new RequestQuestionCallback() {
+            @Override
+            public void onRequestQuestionCompleted() {
+                // 更新座標
+                streetViewCoordinate = new LatLng(qLatitudes[currentQuestion], qLongitudes[currentQuestion]);
+                streetViewIns.setPosition(streetViewCoordinate);
+            }
+        });
     }
 
     private void showHintPopup() {
@@ -486,7 +523,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         if(currentQuestion < 3)
             currentQuestion++;
 
-        RequestQuestion(city[0], town[0], new RequestQuestionCallback() {
+        RequestQuestion(1, city[0], town[0], new RequestQuestionCallback() {
             @Override
             public void onRequestQuestionCompleted() {
                 streetViewCoordinate = new LatLng(qLatitudes[currentQuestion], qLongitudes[currentQuestion]);
@@ -510,7 +547,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
                             retryCount++;
                             if (retryCount < MAX_RETRY) {
                                 Log.d("StreetView", "No data, retrying... Attempt: " + retryCount);
-                                RequestQuestion(city[0], town[0], (RequestQuestionCallback) MainPlay.this);
+                                RequestQuestion(1, city[0], town[0], (RequestQuestionCallback) MainPlay.this);
                             } else {
                                 Log.d("StreetView", "Max retries reached. No Street View data available.");
                                 Toast.makeText(MainPlay.this, "No Street View data found after retries.", Toast.LENGTH_SHORT).show();
@@ -528,7 +565,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         startTimer();
     }
 
-    public void RequestQuestion(String ity, String own, RequestQuestionCallback callback) {
+    public void RequestQuestion(int ctx, String ity, String own, RequestQuestionCallback callback) {
         ApiHelper.fetchCoordinates(this, ity, own,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -555,7 +592,8 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
                             city[currentQuestion] = returnCity;
                             town[currentQuestion] = returnTown;
 
-                            callback.onRequestQuestionCompleted();
+                            if(ctx == 1)
+                                callback.onRequestQuestionCompleted();
                         } catch (Exception e) {
                         }
                     }
