@@ -88,7 +88,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
     private TextView timerText;
     private CountDownTimer countDownTimer;
-    private long timeLeftInMillis = 30000; // 30 seconds in milliseconds
+    private long timeLeftInMillis = 100000; // 30 seconds in milliseconds
 
     private TextView countdownText;  // 用來顯示3秒倒數的TextView
     private Handler handler = new Handler();
@@ -600,7 +600,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         mapIns.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(23.975667, 120.973861), 8f));
         currentMarker.remove();
 
-        timeLeftInMillis = 30000;
+        timeLeftInMillis = 100000;
         startTimer();
     }
 
