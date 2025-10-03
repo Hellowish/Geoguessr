@@ -212,91 +212,91 @@ public class Home extends AppCompatActivity {
                 int townArrayId;
                 switch (position) {
                     case 0: // 台北市
-                        city = "taipei";
+                        city = "臺北市";
                         townArrayId = R.array.towns_taipei;
                         break;
                     case 1: // 新北市
-                        city = "newtaipei";
+                        city = "新北市";
                         townArrayId = R.array.towns_newtaipei;
                         break;
                     case 2: // 桃園市
-                        city = "taoyuan";
+                        city = "桃園市";
                         townArrayId = R.array.towns_taoyuan;
                         break;
                     case 3: // 台中市
-                        city = "taichung";
+                        city = "臺中市";
                         townArrayId = R.array.towns_taichung;
                         break;
                     case 4: // 台南市
-                        city = "tainan";
+                        city = "臺南市";
                         townArrayId = R.array.towns_tainan;
                         break;
                     case 5: // 高雄市
-                        city = "kaohsiung";
+                        city = "高雄市";
                         townArrayId = R.array.towns_kaohsiung;
                         break;
                     case 6: // 基隆市
-                        city = "keelung";
+                        city = "基隆市";
                         townArrayId = R.array.towns_keelung;
                         break;
                     case 7: // 新竹市
-                        city = "hsinchu_city";
+                        city = "新竹市";
                         townArrayId = R.array.towns_hsinchu;
                         break;
                     case 8: // 嘉義市
-                        city = "chiayi_county";
+                        city = "嘉義市";
                         townArrayId = R.array.towns_chiayi;
                         break;
                     case 9: // 宜蘭縣
-                        city = "yilan";
+                        city = "宜蘭縣";
                         townArrayId = R.array.towns_yilan;
                         break;
                     case 10: // 新竹縣
-                        city = "hsinchu_county";
+                        city = "新竹縣";
                         townArrayId = R.array.towns_hsinchucounty;
                         break;
                     case 11: // 苗栗縣
-                        city = "miaoli";
+                        city = "苗栗縣";
                         townArrayId = R.array.towns_miaoli;
                         break;
                     case 12: // 彰化縣
-                        city = "chiayi_city";
+                        city = "彰化縣";
                         townArrayId = R.array.towns_changhua;
                         break;
                     case 13: // 南投縣
-                        city = "nantou";
+                        city = "南投縣";
                         townArrayId = R.array.towns_nantou;
                         break;
                     case 14: // 雲林縣
-                        city = "yunlin";
+                        city = "雲林縣";
                         townArrayId = R.array.towns_yunlin;
                         break;
                     case 15: // 嘉義縣
-                        city = "chiayi_county";
+                        city = "嘉義縣";
                         townArrayId = R.array.towns_chiayicounty;
                         break;
                     case 16: // 屏東縣
-                        city = "pingtung";
+                        city = "屏東縣";
                         townArrayId = R.array.towns_pingtung;
                         break;
                     case 17: // 臺東縣
-                        city = "taitung";
+                        city = "臺東縣";
                         townArrayId = R.array.towns_taitung;
                         break;
                     case 18: // 花蓮縣
-                        city = "hualien";
+                        city = "花蓮縣";
                         townArrayId = R.array.towns_hualien;
                         break;
                     case 19: // 澎湖縣
-                        city = "penghu";
+                        city = "澎湖縣";
                         townArrayId = R.array.towns_penghu;
                         break;
                     case 20: // 金門縣
-                        city = "kinmen";
+                        city = "金門縣";
                         townArrayId = R.array.towns_kinmen;
                         break;
                     case 21: // 連江縣
-                        city = "lienchiang";
+                        city = "連江縣";
                         townArrayId = R.array.towns_lianjiang;
                         break;
                     case 22: // 台灣
@@ -372,31 +372,38 @@ public class Home extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            // 遍歷整個 JSONArray
-                            if (response.length() == 0) {
+                            // 確認 response 中有 "data" 陣列
+                            JSONArray dataArray = response.getJSONArray("data");
+
+                            // 如果 dataArray 長度為 0，則沒有資料，退出
+                            if (dataArray.length() == 0) {
                                 Log.d("DEBUG", "No data found in the response.");
                                 return;  // 如果資料為空，則不繼續處理
                             }
 
-                            // 如果有資料，開始處理
-                            // 解析每一筆資料
-                            String returnCity = response.getString("city");
-                            String returnTown = response.getString("town");
-                            double latitude = response.getDouble("latitude");
-                            double longitude = response.getDouble("longitude");
+                            // 遍歷整個 dataArray，解析每一個城市資料
+                            for (int i = 0; i < dataArray.length(); i++) {
+                                JSONObject cityData = dataArray.getJSONObject(i);  // 獲取每一筆資料
 
-                            // 進行必要的處理
-                            latitude = Math.round(latitude * 10000.0) / 10000.0;
-                            longitude = Math.round(longitude * 10000.0) / 10000.0;
+                                // 解析每一筆資料
+                                String returnCity = cityData.getString("city");
+                                String returnTown = cityData.getString("town");
+                                double latitude = cityData.getDouble("latitude");
+                                double longitude = cityData.getDouble("longitude");
 
-                            // 保存解析出來的資料
-                            qCities[0] = city;
-                            qTowns[0] = town;
-                            qLatitudes[0] = latitude;
-                            qLongitudes[0] = longitude;
+                                // 進行必要的處理：四捨五入
+                                latitude = Math.round(latitude * 10000.0) / 10000.0;
+                                longitude = Math.round(longitude * 10000.0) / 10000.0;
 
-                                // 輸出資料
+                                // 保存解析出來的資料
+                                qCities[i] = returnCity;
+                                qTowns[i] = returnTown;
+                                qLatitudes[i] = latitude;
+                                qLongitudes[i] = longitude;
+
+                                // 輸出資料，確認是否正確
                                 Log.d("City Info", "City: " + returnCity + ", Town: " + returnTown);
+                            }
 
                             // 延遲隱藏 ProgressBar，確保動畫完成後再隱藏
                             progressBar.postDelayed(new Runnable() {
@@ -421,7 +428,7 @@ public class Home extends AppCompatActivity {
                         Toast.makeText(Home.this,
                                 "Error: " + error.getMessage(),
                                 Toast.LENGTH_LONG).show();
-                        Log.d("DEBUG", "Error: " + error.getMessage());
+                        Log.d("DEBUG", "Erraora: " + error.getMessage());
                         progressBar.setVisibility(View.GONE); // 如果請求失敗也隱藏進度條
                     }
                 }

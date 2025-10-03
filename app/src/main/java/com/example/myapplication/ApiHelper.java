@@ -18,11 +18,11 @@ import java.util.Objects;
 public class ApiHelper {
 
     // 原始的 URL
-    private static final String BASE_URL = "http://140.136.151.146/geo/coordinate.php";
+    private static final String BASE_URL = "http://172.20.10.5/geo/coordinate.php";
 
     // 新增一個插入資料的 URL (不同資料庫)
-    private static final String INSERT_URL = "http://140.136.151.146/geo/insert.php";
-    private static final String READ_URL = "http://140.136.151.146/geo/records.php";
+    private static final String INSERT_URL = "http://172.20.10.5/geo/insert.php";
+    private static final String READ_URL = "http://172.20.10.5/geo/records.php";
 
     // =======================
     // 原本的 GET JSON 請求方法
@@ -34,6 +34,7 @@ public class ApiHelper {
             town = "";
 
         String url = BASE_URL + "?city=" + city + "&town=" + town;
+
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET, url, null,

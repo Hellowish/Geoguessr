@@ -97,6 +97,8 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
     private ImageButton expandButton;
     private boolean isMapFragmentVisible = false;
 
+    private boolean isTimerRunning = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,7 +130,8 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         town = getIntent().getStringArrayExtra("town");
         qLatitudes = getIntent().getDoubleArrayExtra("qLatitudes");
         qLongitudes = getIntent().getDoubleArrayExtra("qLongitudes");
-        // Log.d("qLatitudesInfo", "City: " + qLatitudes[0]);
+        //確認是否成功抓取緯度
+        Log.d("qLatitudesInfo", "City: " + qLatitudes[0] + " ");
 
         assert qLongitudes != null;
         streetViewCoordinate = new LatLng(qLatitudes[currentQuestion], qLongitudes[currentQuestion]);
@@ -291,21 +294,25 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
     }
 
     private void startTimer() {
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
+        if (isTimerRunning) return; // 已在倒數中，就不再啟動
+
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 timeLeftInMillis = millisUntilFinished;
+                Log.d("TimerDebug", "onTick: " + timeLeftInMillis);
                 updateTimerText();
             }
 
             @Override
             public void onFinish() {
+                isTimerRunning = false;
+                Log.d("TimerDebug", "Timer finished");
                 resetQuestion();
             }
         }.start();
+
+        isTimerRunning = true;
     }
 
     private void updateTimerText() {
@@ -519,7 +526,7 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
 
     public void resetQuestion() {
         // Inside your logic where currentQuestion is checked
-        if (currentQuestion >= 2) {
+        if (currentQuestion >= 0) {
             // Move to FailureActivity
             Intent intent = new Intent(MainPlay.this, FailureActivity.class);
             intent.putExtra("sum", sum); // Pass the sum value to FailureActivity
@@ -565,7 +572,35 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
         RequestQuestion(1, city[0], town[0], new RequestQuestionCallback() {
             @Override
             public void onRequestQuestionCompleted() {
+                //Log.d("StreetView", currentQuestion + " Latitude: " + qLatitudes[currentQuestion] + ", Longitude: " + qLongitudes[currentQuestion]);
+
                 streetViewCoordinate = new LatLng(qLatitudes[currentQuestion], qLongitudes[currentQuestion]);
+
+                SupportStreetViewPanoramaFragment fragment = (SupportStreetViewPanoramaFragment)
+                        getSupportFragmentManager().findFragmentById(R.id.streetview_fragment);
+
+                if (fragment != null) {
+                    fragment.getStreetViewPanoramaAsync(new OnStreetViewPanoramaReadyCallback() {
+                        @Override
+                        public void onStreetViewPanoramaReady(StreetViewPanorama panorama) {
+                            streetViewIns = panorama;
+
+                            LatLng newCoord = new LatLng(qLatitudes[currentQuestion], qLongitudes[currentQuestion]);
+                            streetViewCoordinate = newCoord;
+
+                            streetViewIns.setPosition(newCoord);
+
+                            // 重設視角
+                            streetViewIns.animateTo(
+                                    new StreetViewPanoramaCamera.Builder()
+                                            .orientation(new StreetViewPanoramaOrientation(0, 0))
+                                            .zoom(1)
+                                            .build(),
+                                    1000
+                            );
+                        }
+                    });
+                }
 
                 // 設置 StreetViewPanorama 並檢查是否有街景資料
                 streetViewIns.setPosition(streetViewCoordinate);
@@ -630,6 +665,9 @@ public class MainPlay extends AppCompatActivity implements OnMapReadyCallback, O
                             // 保存解析出來的資料
                             city[currentQuestion] = returnCity;
                             town[currentQuestion] = returnTown;
+
+                            // 檢查座標更新
+                            Log.d("RequestQuestion", "Received city: " + returnCity + ", town: " + returnTown + ", latitude: " + latitude + ", longitude: " + longitude);
 
                             if(ctx == 1)
                                 callback.onRequestQuestionCompleted();

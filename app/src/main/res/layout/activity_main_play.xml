@@ -35,82 +35,6 @@
         tools:layout_editor_absoluteY="736dp" />
 
     <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="852dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/sidescroll"
-        tools:layout_editor_absoluteY="-16dp" />
-
-    <ImageButton
-        android:id="@+id/Answer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
-        android:background="@null"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.988"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hint"
-        app:srcCompat="@drawable/answer2" />
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/map_fragment"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="411dp"
-        android:layout_height="730dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
-
-    <TextView
-        android:id="@+id/timer_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="0"
-        android:textColor="#56BAA4"
-        android:textSize="60sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/hint"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
-        android:background="@null"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.988"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/expand"
-        app:srcCompat="@drawable/hint2" />
-
-    <!--android:textStyle="bold"-->
-
-    <ImageButton
-        android:id="@+id/expand"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
-        android:background="@null"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.988"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/map2" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="20dp" />
-
-    <ImageView
         android:id="@+id/imageView2"
         android:layout_width="1217dp"
         android:layout_height="1000dp"
@@ -122,35 +46,111 @@
         app:layout_constraintVertical_bias="0.5"
         app:srcCompat="@drawable/playback" />
 
-    <TextView
-        android:id="@+id/countdownText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:shadowColor="#008b8b"
-        android:text="3"
-        android:textColor="#000000"
-        android:textSize="250sp"
-        android:textStyle="bold"
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="499dp"
+        android:layout_height="787dp"
+        android:layout_marginStart="908dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
+        app:srcCompat="@drawable/sidescroll" />
 
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="831dp"
-        android:layout_height="747dp"
-        android:layout_marginEnd="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <ImageButton
+            android:id="@+id/Answer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.961"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/answer2"
+            tools:layout_editor_absoluteY="225dp" />
+
+            <androidx.fragment.app.FragmentContainerView
+                       android:id="@+id/map_fragment"
+                       android:name="com.google.android.gms.maps.SupportMapFragment"
+                       android:layout_width="411dp"
+                       android:layout_height="730dp"
+                       app:layout_constraintBottom_toBottomOf="parent"
+                       app:layout_constraintTop_toTopOf="parent"
+                       app:layout_constraintVertical_bias="0.5" />
+
+                   <TextView
+                       android:id="@+id/timer_text"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="4dp"
+                       android:text="0"
+                       android:textColor="#56BAA4"
+                       android:textSize="60sp"
+                       app:layout_constraintEnd_toEndOf="parent"
+                       app:layout_constraintHorizontal_bias="0.5"
+                       app:layout_constraintStart_toStartOf="parent"
+                       app:layout_constraintTop_toTopOf="parent" />
+
+            <!--android:textStyle="bold" -->
+
+    <ImageButton
+        android:id="@+id/hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="88dp"
+        android:background="@null"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/map_fragment"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5">
+        app:layout_constraintHorizontal_bias="0.953"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Answer"
+        app:srcCompat="@drawable/hint2" />
 
-    </FrameLayout>
+    <ImageButton
+        android:id="@+id/expand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:background="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.953"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hint"
+        app:srcCompat="@drawable/map2" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                  <androidx.constraintlayout.widget.Guideline
+                      android:id="@+id/guideline2"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                      app:layout_constraintGuide_begin="20dp" />
+
+                  <TextView
+                      android:id="@+id/countdownText"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="100dp"
+                      android:shadowColor="#008b8b"
+                      android:text="3"
+                      android:textColor="#000000"
+                      android:textSize="250sp"
+                      android:textStyle="bold"
+                      app:layout_constraintBottom_toBottomOf="parent"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintHorizontal_bias="0.5"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toTopOf="parent"
+                      app:layout_constraintVertical_bias="0.5" />
+
+                  <FrameLayout
+                      android:id="@+id/fragment_container"
+                      android:layout_width="831dp"
+                      android:layout_height="747dp"
+                      android:layout_marginEnd="4dp"
+                      app:layout_constraintBottom_toBottomOf="parent"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintHorizontal_bias="0.0"
+                      app:layout_constraintStart_toEndOf="@+id/map_fragment"
+                      app:layout_constraintTop_toTopOf="parent"
+                      app:layout_constraintVertical_bias="0.5">
+
+                  </FrameLayout>
+
+              </androidx.constraintlayout.widget.ConstraintLayout>

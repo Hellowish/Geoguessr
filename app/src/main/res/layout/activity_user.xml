@@ -12,12 +12,11 @@
         android:id="@+id/tp"
         android:layout_width="196dp"
         android:layout_height="83dp"
-        android:layout_marginTop="392dp"
+        android:layout_marginTop="428dp"
         android:text="0"
         android:textColor="#339F91"
         android:textSize="48sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,7 +24,7 @@
         android:id="@+id/hs"
         android:layout_width="196dp"
         android:layout_height="83dp"
-        android:layout_marginTop="488dp"
+        android:layout_marginTop="528dp"
         android:text="0"
         android:textColor="#339F91"
         android:textSize="48sp"
